@@ -4,6 +4,7 @@ import { ShoppingCart, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TrippinFigure } from "@/components/dancing-figures"
 
 const merchItems = [
   {
@@ -74,7 +75,12 @@ const merchItems = [
 
 export default function MerchPage() {
   return (
-    <div className="container py-12">
+    <div className="container py-12 relative">
+      {/* Moved dancing figure to top-left corner */}
+      <div className="absolute top-0 left-0 z-0">
+        <TrippinFigure delay={900} />
+      </div>
+
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Merchandise</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Support Night Church and take home a piece of the desert rave experience

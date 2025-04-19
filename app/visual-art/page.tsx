@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { HeadBangerFigure } from "@/components/dancing-figures"
 
 export default function VisualArtPage() {
   const projectionMappingWorks = [
@@ -45,7 +46,12 @@ export default function VisualArtPage() {
   ]
 
   return (
-    <div className="container py-12">
+    <div className="container py-12 relative">
+      {/* Moved dancing figure to top-right corner */}
+      <div className="absolute top-0 right-0 z-0">
+        <HeadBangerFigure delay={700} />
+      </div>
+
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Visual Art & Projection Mapping</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Explore the visual creations and projection mapping work by Mortl and the Night Church collective

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import SoundcloudEmbed from "@/components/soundcloud-embed"
+import { InterpretiveFigure } from "@/components/dancing-figures"
 
 // This would typically come from a database
 const getDjData = (id: string) => {
@@ -12,89 +13,170 @@ const getDjData = (id: string) => {
     mortl: {
       name: "Mortl",
       role: "Founder & Resident DJ",
-      image: "/placeholder.svg?height=400&width=400",
+      image:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Mortl_Profile-bxo3UjGbPDzQL1UuPjYqFnsaYXgfnd.webp",
       coverImage:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC5032-Edit-Edit.jpg-jnWKGPY2GIod00CudfBfuZySNwNUEc.jpeg",
-      bio: `Mortl is the founder of Night Church and a resident DJ, specializing in psychedelic sounds and immersive experiences in the desert. With a passion for creating unique sonic journeys, Mortl has been at the forefront of the underground desert rave scene in Southern California.
+      bio: `Mortl is the founder and resident DJ of Night Church, a desert rave collective acclaimed for delivering sophisticated, multi-dimensional psychedelic experiences in remote outdoor California locations. His DJ sets expertly navigate through genres such as psytrance, techno, ambient, and experimental music, characterized by meticulous EQing, seamless transitions, and an intuitive ability to curate emotional and rhythmic journeys tailored specifically for each event.
 
-      As both a DJ and visual artist, Mortl combines music with projection mapping to create fully immersive experiences that transport participants to other dimensions. The Night Church collective was born from a desire to create sacred spaces for musical exploration under the desert stars.`,
+      As a professional visual artist, Mortl specializes in creating vibrant, surrealistic visual narratives through advanced projection mapping techniques, generative digital art, and precise geometric designs. His installations feature dynamic, immersive visual environments that enhance and synchronize with the audio during performances, significantly elevating the sensory impact of any event. Mortl employs vibrant colors, complex patterns, and psychedelic aesthetics to produce engaging and memorable experiences for event attendees.
+      
+      Driven by innovation and a commitment to artistic excellence, Mortl continuously pushes the boundaries of audiovisual artistry. His dedication to refining his craft, combined with a passion for fostering creative community engagement, ensures that Night Church events remain at the forefront of experiential entertainment and cultural expression.`,
       genres: ["Psytrance", "Techno", "Ambient", "Experimental"],
-      soundcloudUrl: "https://soundcloud.com/mortl",
+      soundcloudUrl:
+        "https://soundcloud.com/mmortl/sets/tracks-and-mixes-by-mortl?si=36d6d1805b324bc79c32d03211d6ce64&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
       upcomingEvents: [
         { name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" },
         { name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" },
       ],
     },
-    emote: {
-      name: "Emote",
+    madmanski: {
+      name: "Madmanski",
       role: "Resident DJ",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/focused-dj.png",
       coverImage:
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4783-Enhanced-NR.jpg-NJG89yvWqrZvXV0CX1DwQfa7N0E7jO.jpeg",
-      bio: `Emote is known for emotional and uplifting sets that take listeners on a journey through sound. As a resident DJ at Night Church, Emote brings a unique blend of progressive and melodic techno to the desert landscape.
+      bio: `Madmanski is a resident DJ at Night Church, known for energetic sets that blend multiple electronic genres. With a background in traditional DJing techniques and a passion for cutting-edge sounds, Madmanski creates dance floor experiences that are both accessible and innovative.
 
-      With a background in music production and sound design, Emote crafts carefully curated sets that evolve throughout the night, building energy and emotion as the journey unfolds.`,
-      genres: ["House", "Progressive", "Melodic Techno", "Deep House"],
-      soundcloudUrl: "https://soundcloud.com/emote",
-      upcomingEvents: [
-        { name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" },
-        { name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" },
-      ],
-    },
-    "desert-dweller": {
-      name: "Desert Dweller",
-      role: "Guest DJ",
-      image: "/placeholder.svg?height=400&width=400",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4802.jpg-ILujqjKflaTGSnYqbqMTQwwpOTexQy.jpeg",
-      bio: `Desert Dweller blends ancient and modern sounds to create a unique desert music experience. Drawing inspiration from global rhythms and indigenous music traditions, Desert Dweller creates a sonic tapestry that resonates with the natural landscape of the desert.
-
-      As a frequent guest at Night Church events, Desert Dweller brings a spiritual dimension to the collective's offerings, often performing during sunrise sets that welcome the new day.`,
-      genres: ["Downtempo", "Tribal", "World Fusion", "Organic House"],
-      soundcloudUrl: "https://soundcloud.com/desert-dweller",
-      upcomingEvents: [{ name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" }],
-    },
-    "cosmic-dust": {
-      name: "Cosmic Dust",
-      role: "Visual Artist & DJ",
-      image: "/placeholder.svg?height=400&width=400",
-      coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4807.jpg-nyZ2SJh0HL1fUXcswUxxHbXOQYP0po.jpeg",
-      bio: `Cosmic Dust creates immersive audiovisual experiences that blend music with stunning projection mapping. As both a visual artist and musician, Cosmic Dust brings a multidimensional approach to Night Church events.
-
-      Specializing in ambient and experimental sounds, Cosmic Dust's performances are as much about the visual journey as they are about the music, creating environments that transport participants to other realms of consciousness.`,
-      genres: ["Ambient", "Experimental", "Drone", "Soundscapes"],
-      soundcloudUrl: "https://soundcloud.com/cosmic-dust",
+      Drawing from influences across house, techno, and breaks, Madmanski's sets are characterized by driving rhythms, unexpected transitions, and moments of pure euphoria that keep dancers moving throughout the night.`,
+      genres: ["House", "Techno", "Breaks"],
+      soundcloudUrl: "https://soundcloud.com",
       upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
     },
-    "neon-shaman": {
-      name: "Neon Shaman",
-      role: "Guest DJ",
-      image: "/placeholder.svg?height=400&width=400",
+    "k-lala": {
+      name: "K~lala",
+      role: "Resident DJ",
+      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/K-lala-1HOjE9tSbpjQYWdxUZPLboMiNlUuCm.webp",
       coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4723.jpg-xrR1QxvyBaP50VRmZU922NnyPVNm1l.jpeg",
-      bio: `Neon Shaman brings spiritual and tribal elements to electronic music for a transcendent dance experience. Combining traditional shamanic instruments with modern electronic production, Neon Shaman creates a bridge between ancient ritual and contemporary dance culture.
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4807.jpg-nyZ2SJh0HL1fUXcswUxxHbXOQYP0po.jpeg",
+      bio: `K~lala crafts immersive sonic journeys that take listeners through emotional landscapes of sound. Her sets are known for their narrative quality, building stories through carefully selected tracks and thoughtful progression.
 
-      As a guest DJ at Night Church events, Neon Shaman's performances often become ceremonial experiences that guide participants through emotional and spiritual journeys.`,
-      genres: ["Tribal House", "Organic House", "Shamanic Tech", "Ritual Techno"],
-      soundcloudUrl: "https://soundcloud.com/neon-shaman",
+      With a background in music theory and composition, K~lala approaches DJing as an art form, creating experiences that resonate on both intellectual and emotional levels.`,
+      genres: ["Deep House", "Progressive", "Melodic"],
+      soundcloudUrl: "https://soundcloud.com/kayla-hoxie/sets/klala",
       upcomingEvents: [{ name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" }],
     },
-    "desert-fox": {
-      name: "Desert Fox",
+    subduction: {
+      name: "Subduction",
       role: "Resident DJ",
-      image: "/placeholder.svg?height=400&width=400",
+      image: "/subduction-dj.png",
       coverImage:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC5255.jpg-dZn9uQpEwwIYID3TIYExaKVAzzSo9u.jpeg",
-      bio: `Desert Fox delivers high energy sets that blend multiple genres with a focus on heavy bass and breakbeats. As a resident DJ at Night Church, Desert Fox brings a raw energy that contrasts with some of the more ambient and downtempo offerings.
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4802.jpg-ILujqjKflaTGSnYqbqMTQwwpOTexQy.jpeg",
+      bio: `Subduction takes listeners on a journey into the depths of techno, where layers of sound collide and transform like tectonic plates beneath the earth's surface. Their sets are characterized by hypnotic rhythms, deep bass frequencies, and textural soundscapes that create an immersive sonic environment.
 
-      Known for technical mixing skills and an encyclopedic knowledge of electronic music, Desert Fox's sets are journeys through the history and future of dance music, reimagined for the desert landscape.`,
-      genres: ["Breaks", "Electro", "Bass Music", "UK Garage"],
-      soundcloudUrl: "https://soundcloud.com/desert-fox",
+      Drawing inspiration from geological processes, Subduction's approach to DJing emphasizes gradual transformation and powerful momentum, building pressure and releasing energy in ways that move both body and mind. Each set is a carefully crafted exploration of depth and density in electronic music.
+      
+      As a resident DJ at Night Church, Subduction contributes a unique sonic signature to the collective's events, complementing the desert landscape with sounds that seem to emerge from deep within the earth itself.`,
+      genres: ["Deep Techno", "Dub Techno", "Ambient"],
+      soundcloudUrl: "https://soundcloud.com",
       upcomingEvents: [
         { name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" },
         { name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" },
       ],
+    },
+    "d-davis": {
+      name: "D.Davis",
+      role: "Resident DJ",
+      image: "/desert-beats.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4802.jpg-ILujqjKflaTGSnYqbqMTQwwpOTexQy.jpeg",
+      bio: `D.Davis is known for pushing the boundaries of electronic music with innovative mixing techniques and track selection. Their approach to DJing is experimental yet accessible, creating spaces where dancers can lose themselves in sound.
+
+      With a keen ear for emerging trends and underground sounds, D.Davis brings fresh energy to the Night Church collective, constantly evolving their style while maintaining a signature sound.`,
+      genres: ["Techno", "Minimal", "Experimental"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" }],
+    },
+    emotep: {
+      name: "Emotep",
+      role: "Resident DJ",
+      image: "/vibrant-dj-projection.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4807.jpg-nyZ2SJh0HL1fUXcswUxxHbXOQYP0po.jpeg",
+      bio: `Emotep creates atmospheric soundscapes that perfectly complement Night Church's immersive visual experiences. Their sets blend downtempo rhythms with ambient textures and world music influences, creating a meditative yet engaging sonic environment.
+
+      As both a DJ and producer, Emotep brings original compositions into their sets, offering unique sounds that can't be heard anywhere else.`,
+      genres: ["Downtempo", "Ambient", "World Fusion"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
+    },
+    sepia: {
+      name: "Sepia",
+      role: "Resident DJ",
+      image: "/retro-grooves.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4723.jpg-xrR1QxvyBaP50VRmZU922NnyPVNm1l.jpeg",
+      bio: `Sepia blends nostalgic sounds with modern production techniques for a unique auditory experience. Their sets evoke a sense of timelessness, drawing from vintage recordings and classic electronic tracks while maintaining a contemporary edge.
+
+      With a background in audio engineering, Sepia brings technical precision to their performances, ensuring that every frequency is perfectly balanced for maximum impact.`,
+      genres: ["Lo-fi", "Trip-hop", "Electronica"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" }],
+    },
+    metaperspective: {
+      name: "Metaperspective",
+      role: "Resident DJ",
+      image: "/cosmic-grooves.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC5255.jpg-dZn9uQpEwwIYID3TIYExaKVAzzSo9u.jpeg",
+      bio: `Metaperspective takes listeners on mind-bending journeys through psychedelic soundscapes and driving rhythms. Their sets are characterized by complex patterns, hypnotic beats, and moments of transcendent release.
+
+      As a longtime contributor to the psychedelic music scene, Metaperspective brings deep knowledge and experience to their performances, guiding dancers through carefully crafted sonic experiences.`,
+      genres: ["Psytrance", "Progressive", "Full-on"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" }],
+    },
+    samskara: {
+      name: "Samskara",
+      role: "Resident DJ",
+      image: "/cosmic-grooves.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4802.jpg-ILujqjKflaTGSnYqbqMTQwwpOTexQy.jpeg",
+      bio: `Samskara infuses spiritual elements into electronic music for transcendent dance experiences. Drawing from various cultural traditions and ritual music practices, their sets create spaces for communal connection and personal transformation.
+
+      With a deep respect for the sacred potential of dance music, Samskara approaches DJing as a form of modern shamanism, guiding participants through emotional and spiritual journeys.`,
+      genres: ["Tribal", "Organic House", "Shamanic Tech"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
+    },
+    "fungus-amongus": {
+      name: "Fungus Amongus",
+      role: "Resident DJ",
+      image: "/funky-fungi-beats.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4723.jpg-xrR1QxvyBaP50VRmZU922NnyPVNm1l.jpeg",
+      bio: `Fungus Amongus sprouts groovy beats and mind-expanding sounds that connect dancers to the earth and beyond. Their sets are characterized by organic textures, funky rhythms, and psychedelic flourishes that create a playful yet profound dance floor experience.
+
+      Inspired by the interconnected networks of mycelium, Fungus Amongus approaches music as a way to foster community and ecological awareness through shared sonic experiences.`,
+      genres: ["Psychedelic", "Bass Music", "Glitch Hop"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" }],
+    },
+    "lil-caca-floja": {
+      name: "lil caca floja",
+      role: "Resident DJ",
+      image: "/sonic-alchemy.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC5255.jpg-dZn9uQpEwwIYID3TIYExaKVAzzSo9u.jpeg",
+      bio: `lil caca floja pushes boundaries with unconventional sounds and unexpected rhythmic patterns. Their sets challenge listeners while maintaining a playful energy that keeps the dance floor moving.
+
+      With a background in sound design and experimental music, lil caca floja brings technical innovation to their performances, creating unique sonic textures and surprising musical moments.`,
+      genres: ["Experimental", "Bass", "Leftfield"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" }],
+    },
+    jafar: {
+      name: "Jafar",
+      role: "Resident DJ",
+      image: "/desert-grooves.png",
+      coverImage:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4783-Enhanced-NR.jpg-NJG89yvWqrZvXV0CX1DwQfa7N0E7jO.jpeg",
+      bio: `Jafar weaves Middle Eastern influences with electronic beats for a truly global dance experience. Their sets blend traditional instruments and melodies with contemporary production techniques, creating a bridge between cultural traditions and modern dance music.
+
+      With a deep knowledge of both Middle Eastern musical traditions and electronic genres, Jafar creates unique sonic fusions that transport listeners across time and space.`,
+      genres: ["World Music", "Ethnic Electronic", "Desert Tech"],
+      soundcloudUrl: "https://soundcloud.com",
+      upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
     },
   }
 
@@ -117,7 +199,12 @@ export default function DjProfilePage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="container py-12">
+    <div className="container py-12 relative">
+      {/* Moved dancing figure to bottom-right corner */}
+      <div className="absolute bottom-0 right-0 z-0">
+        <InterpretiveFigure delay={1000} />
+      </div>
+
       <div className="mb-6">
         <Button asChild variant="ghost" size="sm" className="mb-4">
           <Link href="/djs" className="flex items-center">

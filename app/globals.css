@@ -64,6 +64,10 @@
   text-shadow: 0 0 10px rgba(255, 0, 255, 0.7), 0 0 20px rgba(255, 0, 255, 0.5);
 }
 
+.text-shadow {
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 1);
+}
+
 .neon-border {
   box-shadow: 0 0 5px rgba(255, 0, 255, 0.7), 0 0 10px rgba(255, 0, 255, 0.5);
 }
@@ -84,4 +88,24 @@
   100% {
     background-position: 0% 50%;
   }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.dancing-figure {
+  animation: float 6s ease-in-out infinite;
+}
+
+.dancing-figure:hover {
+  animation-play-state: paused;
 }

@@ -12,14 +12,16 @@ const djs = [
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Mortl_Profile-bxo3UjGbPDzQL1UuPjYqFnsaYXgfnd.webp",
     genres: ["Psytrance", "Techno", "Ambient"],
     bio: "Founder of Night Church and resident DJ, Mortl brings psychedelic sounds and immersive experiences to the desert.",
+    hasFullProfile: true,
   },
   {
     id: "madmanski",
     name: "Madmanski",
-    role: "Resident DJ",
-    image: "/focused-dj.png",
+    role: "Co-Founder & Resident DJ",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Madmanski-vKqtGsEKXej8KHabBi1uHGjnAeUgZd.webp",
     genres: ["House", "Techno", "Breaks"],
-    bio: "Resident DJ at Night Church, known for energetic sets that blend multiple electronic genres.",
+    bio: "Co-Founder and resident DJ at Night Church, known for energetic sets that blend multiple electronic genres.",
+    hasFullProfile: true,
   },
   {
     id: "k-lala",
@@ -28,6 +30,7 @@ const djs = [
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/K-lala-1HOjE9tSbpjQYWdxUZPLboMiNlUuCm.webp",
     genres: ["Deep House", "Progressive", "Melodic"],
     bio: "Crafting immersive sonic journeys that take listeners through emotional landscapes of sound.",
+    hasFullProfile: true,
   },
   {
     id: "subduction",
@@ -36,6 +39,7 @@ const djs = [
     image: "/subduction-dj.png",
     genres: ["Deep Techno", "Dub Techno", "Ambient"],
     bio: "Creating hypnotic, tectonic soundscapes that pull listeners into the depths of rhythm and texture.",
+    hasFullProfile: false,
   },
   {
     id: "d-davis",
@@ -44,14 +48,16 @@ const djs = [
     image: "/desert-beats.png",
     genres: ["Techno", "Minimal", "Experimental"],
     bio: "Pushing the boundaries of electronic music with innovative mixing techniques and track selection.",
+    hasFullProfile: true,
   },
   {
     id: "emotep",
     name: "Emotep",
-    role: "Resident DJ",
+    role: "Guest DJ",
     image: "/vibrant-dj-projection.png",
     genres: ["Downtempo", "Ambient", "World Fusion"],
     bio: "Creating atmospheric soundscapes that perfectly complement Night Church's immersive visual experiences.",
+    hasFullProfile: true,
   },
   {
     id: "sepia",
@@ -60,6 +66,7 @@ const djs = [
     image: "/retro-grooves.png",
     genres: ["Lo-fi", "Trip-hop", "Electronica"],
     bio: "Blending nostalgic sounds with modern production techniques for a unique auditory experience.",
+    hasFullProfile: false,
   },
   {
     id: "metaperspective",
@@ -68,6 +75,7 @@ const djs = [
     image: "/cosmic-grooves.png",
     genres: ["Psytrance", "Progressive", "Full-on"],
     bio: "Taking listeners on mind-bending journeys through psychedelic soundscapes and driving rhythms.",
+    hasFullProfile: false,
   },
   {
     id: "samskara",
@@ -76,6 +84,7 @@ const djs = [
     image: "/cosmic-grooves.png",
     genres: ["Tribal", "Organic House", "Shamanic Tech"],
     bio: "Infusing spiritual elements into electronic music for transcendent dance experiences.",
+    hasFullProfile: false,
   },
   {
     id: "fungus-amongus",
@@ -84,6 +93,7 @@ const djs = [
     image: "/funky-fungi-beats.png",
     genres: ["Psychedelic", "Bass Music", "Glitch Hop"],
     bio: "Sprouting groovy beats and mind-expanding sounds that connect dancers to the earth and beyond.",
+    hasFullProfile: false,
   },
   {
     id: "lil-caca-floja",
@@ -92,14 +102,16 @@ const djs = [
     image: "/sonic-alchemy.png",
     genres: ["Experimental", "Bass", "Leftfield"],
     bio: "Pushing boundaries with unconventional sounds and unexpected rhythmic patterns.",
+    hasFullProfile: false,
   },
   {
     id: "jafar",
     name: "Jafar",
-    role: "Resident DJ",
+    role: "Guitarist",
     image: "/desert-grooves.png",
     genres: ["World Music", "Ethnic Electronic", "Desert Tech"],
-    bio: "Weaving Middle Eastern influences with electronic beats for a truly global dance experience.",
+    bio: "Weaving Middle Eastern influences with guitar to create a truly global musical experience.",
+    hasFullProfile: false,
   },
 ]
 
@@ -136,13 +148,24 @@ export default function DJsPage() {
 
               <p className="text-sm text-muted-foreground mb-4">{dj.bio}</p>
 
-              <Button
-                asChild
-                variant="outline"
-                className="w-full border-purple-500 text-purple-300 hover:bg-purple-950/50"
-              >
-                <Link href={`/djs/${dj.id}`}>View Profile</Link>
-              </Button>
+              {dj.hasFullProfile ? (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full border-purple-500 text-purple-300 hover:bg-purple-950/50"
+                >
+                  <Link href={`/djs/${dj.id}`}>View Profile</Link>
+                </Button>
+              ) : (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full border-purple-500 text-purple-300 hover:bg-purple-950/50 opacity-50 cursor-not-allowed"
+                  disabled
+                >
+                  <span>Profile Coming Soon</span>
+                </Button>
+              )}
             </CardContent>
           </Card>
         ))}

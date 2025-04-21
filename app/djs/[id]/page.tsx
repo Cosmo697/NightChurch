@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, Calendar, MapPin } from "lucide-react"
+import { ChevronLeft, Calendar, MapPin } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"

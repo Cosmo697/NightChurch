@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays, Clock, MapPin, Music, Tent, Users } from "lucide-react"
+import { CalendarDays, Clock, MapPin, Music, Tent, Users } from 'lucide-react'
 import RadioPlayer from "@/components/radio-player"
 import { StarGazingFigure } from "@/components/dancing-figures"
 

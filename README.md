@@ -1,2 +1,0 @@
-# NightChurch
-Night Church Website

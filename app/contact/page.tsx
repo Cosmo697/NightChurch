@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { RockerFigure } from "@/components/dancing-figures"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -47,7 +48,12 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="container py-12">
+    <div className="container py-12 relative">
+      {/* Moved dancing figure to bottom-right corner */}
+      <div className="absolute bottom-0 right-0 z-0">
+        <RockerFigure delay={600} />
+      </div>
+
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Contact Us</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Get in touch with Night Church for bookings, merchandise, or general inquiries
@@ -70,7 +76,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-medium mb-1">Location</h3>
-              <p className="text-muted-foreground">Southern California Desert</p>
+              <p className="text-muted-foreground">Southern California</p>
             </div>
           </CardContent>
         </Card>

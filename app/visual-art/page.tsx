@@ -1,51 +1,19 @@
-import Image from "next/image"
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { HeadBangerFigure } from "@/components/dancing-figures"
 
 export default function VisualArtPage() {
-  const projectionMappingWorks = [
-    {
-      title: "Geometric Dreamscape",
-      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4807.jpg-nyZ2SJh0HL1fUXcswUxxHbXOQYP0po.jpeg",
-      description:
-        "Projection mapping featuring geometric patterns and vibrant colors on a custom-built DJ booth structure.",
-    },
-    {
-      title: "EMOTEP Visual Experience",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4783-Enhanced-NR.jpg-NJG89yvWqrZvXV0CX1DwQfa7N0E7jO.jpeg",
-      description: "Custom projection mapping for EMOTEP featuring psychedelic patterns and animated visuals.",
-    },
-    {
-      title: "Hexagon Portal",
-      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4807.jpg-nyZ2SJh0HL1fUXcswUxxHbXOQYP0po.jpeg",
-      description: "Geometric hexagon projection with animated triangular patterns creating a portal effect.",
-    },
-  ]
-
-  const artInstallations = [
-    {
-      title: "Neon Castle",
-      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4723.jpg-xrR1QxvyBaP50VRmZU922NnyPVNm1l.jpeg",
-      description: "Illuminated inflatable castle with custom lighting design for immersive play spaces.",
-    },
-    {
-      title: "Desert Fire Circle",
-      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC4802.jpg-ILujqjKflaTGSnYqbqMTQwwpOTexQy.jpeg",
-      description: "Fire installation with LED lighting and comfortable seating for communal gathering.",
-    },
-    {
-      title: "Night Church Banner",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/_DSC5032-Edit-Edit.jpg-jnWKGPY2GIod00CudfBfuZySNwNUEc.jpeg",
-      description: "Hand-painted psychedelic banner featuring the Night Church aesthetic and desert imagery.",
-    },
-  ]
+  const projectionMappingWorks: { title: string; image: string; description: string }[] = []
+  const artInstallations: { title: string; image: string; description: string }[] = []
 
   return (
-    <div className="container py-12">
+    <div className="container py-12 relative">
+      {/* Moved dancing figure to top-right corner */}
+      <div className="absolute top-0 right-0 z-0">
+        <HeadBangerFigure delay={700} />
+      </div>
+
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Visual Art & Projection Mapping</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Explore the visual creations and projection mapping work by Mortl and the Night Church collective
@@ -58,40 +26,33 @@ export default function VisualArtPage() {
         </TabsList>
 
         <TabsContent value="projection" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projectionMappingWorks.map((work, index) => (
-              <Card key={index} className="bg-black/50 border border-purple-900/50 overflow-hidden">
-                <div className="relative aspect-video">
-                  <Image src={work.image || "/placeholder.svg"} alt={work.title} fill className="object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold mb-2">{work.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{work.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {projectionMappingWorks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Projection mapping works would be mapped here */}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-black/50 border border-purple-900/50 rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Projection Mapping Portfolio Coming Soon</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                We're preparing a showcase of our projection mapping work. Check back soon to see our visual creations.
+              </p>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="installations" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {artInstallations.map((installation, index) => (
-              <Card key={index} className="bg-black/50 border border-purple-900/50 overflow-hidden">
-                <div className="relative aspect-video">
-                  <Image
-                    src={installation.image || "/placeholder.svg"}
-                    alt={installation.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold mb-2">{installation.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{installation.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {artInstallations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Art installations would be mapped here */}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-black/50 border border-purple-900/50 rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Art Installations Gallery Coming Soon</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                We're documenting our art installations from past events. Check back soon to explore our creations.
+              </p>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 

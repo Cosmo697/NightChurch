@@ -9,9 +9,9 @@ export default function ContactPage() {
 
   return (
     <div className="container py-12 relative">
-      {/* Moved dancing figure to bottom-right corner */}
-      <div className="absolute bottom-0 right-0 z-0">
-        <RockerFigure delay={600} />
+      {/* Updated to make the dancing figure fixed at the bottom-right corner */}
+      <div className="fixed bottom-[50%] left-0 z-50">
+        <RockerFigure className="w-32 h-auto" delay={600} />
       </div>
 
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Contact Us</h1>

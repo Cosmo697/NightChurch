@@ -81,7 +81,7 @@ const djs = [
     id: "samskara",
     name: "Samskara",
     role: "Organizer, Resident DJ",
-    image: "/rhythmic-earth.png",
+    image: "/images/djs/samskara.webp",
     genres: ["Psybient", "Psychedelic Rock", "Psycore", "Experimental"],
     bio: "Samskara blends distorted rock, esoteric psychedelia, and introspective ambient into mythic sound journeys. Equal parts seeker and sonic alchemist, she threads raw emotion through the surreal.",
     hasFullProfile: false,
@@ -119,7 +119,7 @@ export default function DJsPage() {
   return (
     <div className="container py-12 relative">
       {/* Moved dancing figure to bottom-left corner */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 z-0">
+      <div className="fixed bottom-[50%] left-0 z-50">
         <StokedFigure delay={500} />
       </div>
 

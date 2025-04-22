@@ -1,51 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Send, CheckCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { RockerFigure } from "@/components/dancing-figures"
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  subject: z.string().min(1, {
-    message: "Please select a subject.",
-  }),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
-  }),
-})
-
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real application, you would send this data to your server
-    console.log(values)
-    setIsSubmitted(true)
-  }
 
   return (
     <div className="container py-12 relative">
@@ -87,94 +47,17 @@ export default function ContactPage() {
             <CardDescription>Fill out the form below and we'll get back to you</CardDescription>
           </CardHeader>
           <CardContent>
-            {isSubmitted ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
-                <p className="text-muted-foreground text-center">
-                  Thank you for reaching out. We'll get back to you as soon as possible.
-                </p>
-                <Button onClick={() => setIsSubmitted(false)} className="mt-6 bg-pink-600 hover:bg-pink-700">
-                  Send Another Message
-                </Button>
-              </div>
-            ) : (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your name" {...field} className="bg-black/30" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="your.email@example.com" {...field} className="bg-black/30" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subject</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="bg-black/30">
-                              <SelectValue placeholder="Select a subject" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="general">General Inquiry</SelectItem>
-                            <SelectItem value="booking">DJ Booking</SelectItem>
-                            <SelectItem value="merchandise">Merchandise Order</SelectItem>
-                            <SelectItem value="projection">Projection Mapping Services</SelectItem>
-                            <SelectItem value="collaboration">Collaboration</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Your message..." className="min-h-[120px] bg-black/30" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700">
-                    <Send className="mr-2 h-4 w-4" />
-                    Send Message
-                  </Button>
-                </form>
-              </Form>
-            )}
+            <iframe
+              src="https://docs.google.com/forms/d/e/1FAIpQLSeEXVvrQxIvm_KitPSaeb6xz5e_5F7UeqWuTlejMw1yKx3mQw/viewform?embedded=true"
+              width="100%"
+              height="1024"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+              className="w-full"
+            >
+              Loading…
+            </iframe>
           </CardContent>
         </Card>
       </div>

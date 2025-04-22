@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Clock, MapPin, Music, Tent, Users } from 'lucide-react'
 import RadioPlayer from "@/components/radio-player"
-import { StarGazingFigure } from "@/components/dancing-figures"
 
 export default function Home() {
   return (
@@ -50,11 +49,6 @@ export default function Home() {
               <Link href="/contact">Contact Us</Link>
             </Button>
           </div>
-        </div>
-
-        {/* Star gazing figures at the bottom of hero - moved to bottom edge */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0">
-          <StarGazingFigure delay={1200} />
         </div>
       </section>
 

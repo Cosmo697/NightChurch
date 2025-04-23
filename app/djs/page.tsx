@@ -27,7 +27,7 @@ const djs = [
     id: "k-lala",
     name: "K~lala",
     role: "Resident DJ",
-    image: "/images/djs/K-lala.webp",
+    image: "/images/djs/K-lala-dj.webp",
     genres: ["PsyDub", "Psycore", "Psytrance", "Flora", "Tribal House"],
     bio: "K~lala channels feminine mysticism through tribal percussion, folk medicine melodies, and glistening psychedelic beats. Her sets feel ceremonial—raw, beautiful, and totally captivating.",
     hasFullProfile: true,
@@ -48,7 +48,7 @@ const djs = [
     image: "/images/djs/DDavis.webp",
     genres: ["World", "House", "Hip-Hop", "Amapiano"],
     bio: "D.Davis opens the party with soul. His sets bring joy, movement, and connection—uplifting global beats laced with groove and intention. A natural vibe-setter with dancer-first instincts.",
-    hasFullProfile: true,
+    hasFullProfile: false,
   },  
   {
     id: "emotep",
@@ -56,7 +56,7 @@ const djs = [
     role: "Guest DJ",
     image: "/images/djs/Emotep.webp",
     genres: ["EDM", "Dance", "Hard Techno"],
-    bio: "Emotep delivers volatile, high-energy chaos—equal parts rave spell and sonic exorcism. Known for unpredictable sets that ride the edge between absurdity and transcendence, he’s here to shake the floor and short-circuit expectations.",
+    bio: "Emotep casts high-energy vibrational spells and sonic exorcisms. Known for explosive sets that ride the line between insanity and transcendence, he’s here to shake the floor and short-circuit expectations.",
     hasFullProfile: false,
   },
   {

@@ -43,11 +43,11 @@ const getDjData = (id: string) => {
     "k-lala": {
       name: "K~lala",
       role: "Resident DJ",
-      image: "/images/djs/K-lala.webp",
+      image: "/images/djs/K-lala-dj.webp",
       coverImage: "/images/Cover_01.webp",
-      bio: `K~lala crafts immersive sonic journeys that take listeners through emotional landscapes of sound. Her sets are known for their narrative quality, building stories through carefully selected tracks and thoughtful progression.
+      bio: `K~lala started DJing after crossing paths with the NightChurch crew, and the connection was instant. What began as curiosity quickly became a deep passion. Self-taught and still learning, K~lala approaches every mix as a way to express, explore, and bring people into something honest and shared.
 
-      With a background in music theory and composition, K~lala approaches DJing as an art form, creating experiences that resonate on both intellectual and emotional levels.`,
+Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Whether she’s building tension or letting the music breathe, there’s always heart behind the sound. If you’re looking for something raw, genre-blending, and emotionally tuned—K~lala offers a unique experience shaped by instinct and soul.`,
       genres: ["Deep House", "Progressive", "Melodic"],
       soundcloudUrl: "https://soundcloud.com/kayla-hoxie/sets/klala",
       upcomingEvents: [{ name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" }],

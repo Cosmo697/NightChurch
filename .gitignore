@@ -25,3 +25,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# other files
+puzzle-system-and-feature-unlock-developer-brief.txt

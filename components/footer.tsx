@@ -1,7 +1,18 @@
+"use client"
+
 import Link from "next/link"
 import { Instagram, Facebook, CloudIcon as SoundCloud } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function Footer() {
+  // Function to reset the portal for testing
+  const resetPortal = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem('nightchurch-visited')
+      window.location.reload()
+    }
+  }
+
   return (
     <footer className="border-t border-purple-900/20 bg-black/90 py-6">
       <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
@@ -9,6 +20,7 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Night Church. All rights reserved.
           </p>
+          
         </div>
 
         <div className="flex items-center gap-4">

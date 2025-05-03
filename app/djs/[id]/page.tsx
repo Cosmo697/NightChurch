@@ -14,67 +14,69 @@ const getDjData = (id: string) => {
       name: "Mortl",
       role: "Founder & Resident DJ",
       image: "/images/djs/Mortl_Profile.webp",
-      coverImage: "/images/Cover_01.webp",
-      bio: `Mortl is the founder and resident DJ of Night Church, a desert rave collective acclaimed for delivering sophisticated, multi-dimensional psychedelic experiences in remote outdoor California locations. His DJ sets expertly navigate through genres such as psytrance, techno, ambient, and experimental music, characterized by meticulous EQing, seamless transitions, and an intuitive ability to curate emotional and rhythmic journeys tailored specifically for each event.
-
-      As a professional visual artist, Mortl specializes in creating vibrant, surrealistic visual narratives through advanced projection mapping techniques, generative digital art, and precise geometric designs. His installations feature dynamic, immersive visual environments that enhance and synchronize with the audio during performances, significantly elevating the sensory impact of any event. Mortl employs vibrant colors, complex patterns, and psychedelic aesthetics to produce engaging and memorable experiences for event attendees.
+      coverImage: "/images/cover/Cover_02.webp",
+      bio: `Mortl is a Southern California–based electronic music producer and projection-mapping artist. Alongside Madmanski and Metaperspective, he co-founded Night Church, a series of word-of-mouth desert gatherings. 
       
-      Driven by innovation and a commitment to artistic excellence, Mortl continuously pushes the boundaries of audiovisual artistry. His dedication to refining his craft, combined with a passion for fostering creative community engagement, ensures that Night Church events remain at the forefront of experiential entertainment and cultural expression.`,
+
+      After his first encounter with experimental soundscapes at El Mirage Dry Lakebed in 2006, Mortl developed a signature DJ style that blends psytrance, ambient textures, and tribal rhythms over high-fidelity stereo rigs beneath open skies. 
+      
+      
+
+      The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church’s ethos of collective artistic exchange and personal discovery.`,
       genres: ["Psytrance", "Techno", "Ambient", "Experimental"],
       soundcloudUrl:
         "https://soundcloud.com/mmortl/sets/tracks-and-mixes-by-mortl?si=36d6d1805b324bc79c32d03211d6ce64&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
       upcomingEvents: [
-        { name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" },
-        { name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" },
+        { name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." },
       ],
     },
     madmanski: {
       name: "Madmanski",
       role: "Co-Founder & Resident DJ",
       image: "/images/djs/Madmanski.webp",
-      coverImage: "/images/Cover_01.webp",
+      coverImage: "/images/cover/Cover_01.webp",
       bio: `Madmanski is a co-founder and resident DJ at Night Church, known for energetic sets that blend multiple electronic genres. With a background in traditional DJing techniques and a passion for cutting-edge sounds, Madmanski creates dance floor experiences that are both accessible and innovative.
 
       Drawing from influences across house, techno, and breaks, Madmanski's sets are characterized by driving rhythms, unexpected transitions, and moments of pure euphoria that keep dancers moving throughout the night.`,
       genres: ["House", "Techno", "Breaks"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
+      upcomingEvents: [{ name: "", date: "", location: "" }],
     },
     "k-lala": {
       name: "K~lala",
       role: "Resident DJ",
       image: "/images/djs/K-lala-dj.webp",
-      coverImage: "/images/Cover_01.webp",
+      coverImage: "/images/cover/Cover_02.webp",
       bio: `K~lala started DJing after crossing paths with the NightChurch crew, and the connection was instant. What began as curiosity quickly became a deep passion. Self-taught and still learning, K~lala approaches every mix as a way to express, explore, and bring people into something honest and shared.
 
 Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Whether she’s building tension or letting the music breathe, there’s always heart behind the sound. If you’re looking for something raw, genre-blending, and emotionally tuned—K~lala offers a unique experience shaped by instinct and soul.`,
-      genres: ["Deep House", "Progressive", "Melodic"],
+      genres: ["Psydub", "Psycore", "Downtempo", "Tribal House"],
       soundcloudUrl: "https://soundcloud.com/kayla-hoxie/sets/klala",
-      upcomingEvents: [{ name: "Neon Oasis", date: "May 25, 2024", location: "Mojave Desert, CA" }],
+      upcomingEvents: [{ name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." }],
     },
     "d-davis": {
       name: "D.Davis",
       role: "Resident DJ",
       image: "/images/djs/DDavis.webp",
-      coverImage: "/images/Cover_01.webp",
+      coverImage: "/images/cover/Cover_01.webp",
       bio: `D.Davis is known for pushing the boundaries of electronic music with innovative mixing techniques and track selection. Their approach to DJing is experimental yet accessible, creating spaces where dancers can lose themselves in sound.
 
       With a keen ear for emerging trends and underground sounds, D.Davis brings fresh energy to the Night Church collective, constantly evolving their style while maintaining a signature sound.`,
       genres: ["Techno", "Minimal", "Experimental"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "Cosmic Communion", date: "July 20, 2024", location: "Lucerne Valley, CA" }],
+      upcomingEvents: [{ name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." }],
     },
     emotep: {
       name: "Emotep",
       role: "Guest DJ",
       image: "/images/djs/Emotep.webp",
-      coverImage: "/images/Cover_01.webp",
+      coverImage: "/images/cover/Cover_02.webp",
       bio: `Emotep creates atmospheric soundscapes that perfectly complement Night Church's immersive visual experiences. Their sets blend downtempo rhythms with ambient textures and world music influences, creating a meditative yet engaging sonic environment.
 
       As both a DJ and producer, Emotep brings original compositions into their sets, offering unique sounds that can't be heard anywhere else.`,
       genres: ["Downtempo", "Ambient", "World Fusion"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "Desert Awakening", date: "June 15, 2024", location: "Joshua Tree, CA" }],
+      upcomingEvents: [{ name: "", date: "", location: "J" }],
     },
   }
 

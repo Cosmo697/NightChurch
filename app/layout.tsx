@@ -6,12 +6,13 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { RadioProvider } from "@/context/radio-context"
+import { PuzzleProvider } from "@/context/puzzle-context"
 import PersistentRadioPlayer from "@/components/persistent-radio-player"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Night Church | Desert Raves in Southern California",
+  title: "Night Church | Making magic and noise under the stars in remote Southern California locations",
   description:
     "Night Church is a collective that throws immersive desert raves in Southern California featuring projection mapping, art installations, and electronic music.",
   icons: {
@@ -39,10 +40,12 @@ export default function RootLayout({
       <body className={`${inter.className} bg-black text-white min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <RadioProvider>
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-            <PersistentRadioPlayer />
+            <PuzzleProvider>
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+              <PersistentRadioPlayer />
+            </PuzzleProvider>
           </RadioProvider>
         </ThemeProvider>
       </body>

@@ -9,7 +9,7 @@ const djs = [
     id: "mortl",
     name: "Mortl",
     role: "Co-Founder & Resident DJ",
-    image: "/images/cover/Cover_02.webp",
+    image: "/images/djs/Mortl_Profile.webp",
     genres: ["Psytrance", "Psycore", "Psybient", "Techno", "IDM", "Folk"],
     bio: "Michael Mortl is a Southern California–based electronic music producer and projection-mapping artist. Alongside Jon (Madmanski) and Travis (Metaperspective), he co-founded Night Church, a series of word-of-mouth desert gatherings. After his first encounter with experimental soundscapes at El Mirage Dry Lakebed in 2006, Mortl developed a signature DJ style that blends psytrance, ambient textures, and tribal rhythms over high-fidelity stereo rigs beneath open skies. The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church’s ethos of collective artistic exchange and personal discovery.",
     hasFullProfile: true,

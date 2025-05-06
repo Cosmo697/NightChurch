@@ -77,15 +77,6 @@ const djs = [
     hasFullProfile: false,
   },
   {
-    id: "samskara",
-    name: "Samskara",
-    role: "Organizer, Resident DJ",
-    image: "/images/djs/samskara-dj.webp",
-    genres: ["Psybient", "Psychedelic Rock", "Psycore", "Experimental"],
-    bio: "Samskara blends distorted rock, esoteric psychedelia, and introspective ambient into mythic sound journeys. Equal parts seeker and sonic alchemist, she threads raw emotion through the surreal.",
-    hasFullProfile: false,
-  },
-  {
     id: "fungus-amongus",
     name: "Fungus Amongus",
     role: "Resident DJ, Resident Shaman",

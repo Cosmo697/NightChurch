@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';  // This now uses SUPABASE_URL and SUPABASE_ANON_KEY
+import supabase, { getAdminSupabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
   try {
     console.log('Subscription request started');
-    
+
     // Get the email and name from the request body
     const { email, name } = await request.json();
     console.log(`Received subscription request for: ${email}`);
@@ -27,9 +27,13 @@ export async function POST(request: Request) {
     }
 
     try {
+      // Use the admin client to bypass RLS policies
+      const adminSupabase = getAdminSupabase();
+      console.log('Using admin Supabase client to bypass RLS policies');
+      
       // Check if email already exists in Supabase
       console.log('Checking for existing subscriber...');
-      const { data: existingSubscribers, error: queryError } = await supabase
+      const { data: existingSubscribers, error: queryError } = await adminSupabase
         .from('subscribers')
         .select('*')
         .ilike('email', email)
@@ -55,13 +59,12 @@ export async function POST(request: Request) {
       const newSubscriber = {
         email,
         name: name || 'Anonymous',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: new Date().toISOString()
       };
 
-      // Insert into Supabase
+      // Insert into Supabase using admin client
       console.log('Inserting new subscriber...');
-      const { data: insertResult, error: insertError } = await supabase
+      const { data: insertResult, error: insertError } = await adminSupabase
         .from('subscribers')
         .insert([newSubscriber])
         .select();

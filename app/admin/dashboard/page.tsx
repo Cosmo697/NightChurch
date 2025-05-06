@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, X, Upload, Image as ImageIcon } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Plus, X, Upload, Image as ImageIcon, Download } from 'lucide-react'
 import { Event, Organizer } from '@/lib/events'
 import { initializeDefaultEvents } from '@/lib/events'
 
@@ -22,11 +23,26 @@ interface Subscriber {
   createdAt: string
 }
 
+interface Rsvp {
+  id: number
+  event_id: string
+  name: string
+  email: string
+  guests: number
+  status: 'confirmed' | 'cancelled' | 'waitlisted'
+  notes?: string
+  created_at: string
+}
+
 export default function AdminDashboard() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [rsvps, setRsvps] = useState<Rsvp[]>([])
+  const [selectedEventForRsvp, setSelectedEventForRsvp] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingRsvps, setIsLoadingRsvps] = useState(false)
   const [error, setError] = useState('')
+  const [rsvpError, setRsvpError] = useState('')
   const [activeTab, setActiveTab] = useState('subscribers')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<Partial<Event>>({
@@ -52,6 +68,7 @@ export default function AdminDashboard() {
   const [isSaving, setIsSaving] = useState(false)
   const [dialogError, setDialogError] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<any>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const router = useRouter()
@@ -85,6 +102,8 @@ export default function AdminDashboard() {
     if (activeTab === 'subscribers') {
       fetchSubscribers(token)
     } else if (activeTab === 'events') {
+      fetchEvents(token)
+    } else if (activeTab === 'rsvps') {
       fetchEvents(token)
     }
   }, [router, activeTab])
@@ -137,12 +156,247 @@ export default function AdminDashboard() {
 
       const data = await response.json()
       setEvents(data.events)
+      
+      // If we're on the RSVPs tab and no event is selected yet, select the first one
+      if (activeTab === 'rsvps' && data.events.length > 0 && !selectedEventForRsvp) {
+        setSelectedEventForRsvp(data.events[0].id)
+        fetchRsvpsForEvent(data.events[0].id, token)
+      }
     } catch (err) {
       console.error('Error fetching events:', err)
       setError('Failed to load events. Please try again.')
     } finally {
       setIsLoading(false)
     }
+  }
+  
+  const fetchRsvpsForEvent = async (eventId: string, token?: string) => {
+    if (!eventId) return;
+    
+    const authToken = token || localStorage.getItem('admin-token');
+    if (!authToken) return;
+    
+    try {
+      setIsLoadingRsvps(true);
+      setRsvpError('');
+      
+      console.log('Fetching RSVPs for event ID:', eventId);
+      
+      // Try both with the event ID and with the slug (in case they're different)
+      const response = await fetch(`/api/admin/rsvps?eventId=${eventId}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('admin-token');
+          router.push('/admin');
+          return;
+        }
+        throw new Error('Failed to fetch RSVPs');
+      }
+
+      const data = await response.json();
+      console.log('RSVPs received from API:', data.rsvps?.length || 0);
+      
+      if (data.rsvps && data.rsvps.length > 0) {
+        setRsvps(data.rsvps || []);
+      } else {
+        // If no RSVPs found, try checking with the debug endpoint which shows all RSVPs
+        const debugResponse = await fetch(`/api/events/rsvp?debug=true`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (debugResponse.ok) {
+          const debugData = await debugResponse.json();
+          console.log('Debug data:', debugData);
+          
+          // Filter RSVPs for the current event ID
+          const eventRsvps = debugData.rsvps?.filter(
+            (rsvp: any) => rsvp.event_id === eventId || 
+                          rsvp.event_id === events.find(e => e.id === eventId)?.slug
+          );
+          
+          if (eventRsvps && eventRsvps.length > 0) {
+            console.log(`Found ${eventRsvps.length} RSVPs for event through debug endpoint`);
+            setRsvps(eventRsvps);
+          } else {
+            setRsvps([]);
+          }
+        } else {
+          setRsvps([]);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching RSVPs:', err);
+      setRsvpError('Failed to load RSVPs. Please try again.');
+      setRsvps([]);
+    } finally {
+      setIsLoadingRsvps(false);
+    }
+  }
+
+  const fetchAllRsvps = async () => {
+    const token = localStorage.getItem('admin-token');
+    if (!token) return;
+    
+    try {
+      setIsLoadingRsvps(true);
+      setRsvpError('');
+      
+      console.log('Fetching ALL RSVPs');
+      
+      const response = await fetch(`/api/admin/rsvps?all=true`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch all RSVPs');
+      }
+
+      const data = await response.json();
+      console.log('All RSVPs:', data);
+      
+      // If we have RSVPs for events with IDs that don't match our current events list
+      if (data.eventIds && data.eventIds.length > 0) {
+        const unknownEventIds = data.eventIds.filter(id => 
+          !events.some(event => event.id === id || event.slug === id)
+        );
+        
+        if (unknownEventIds.length > 0) {
+          console.log('Found RSVPs for unknown event IDs:', unknownEventIds);
+          setRsvpError(`Found RSVPs with unknown event IDs: ${unknownEventIds.join(', ')}`);
+          
+          // Show all RSVPs grouped by event ID
+          if (data.rsvps && data.rsvps.length > 0) {
+            setRsvps(data.rsvps);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching all RSVPs:', err);
+      setRsvpError('Failed to load all RSVPs. Please try again.');
+    } finally {
+      setIsLoadingRsvps(false);
+    }
+  };
+
+  const handleEventSelectionForRsvp = (eventId: string) => {
+    console.log('Selected event ID for RSVPs:', eventId);
+    setSelectedEventForRsvp(eventId);
+    fetchRsvpsForEvent(eventId);
+  }
+  
+  const createTestRsvp = async () => {
+    if (!selectedEventForRsvp) {
+      setRsvpError('Please select an event first');
+      return;
+    }
+    
+    setIsLoadingRsvps(true);
+    setDebugInfo(null);
+    
+    try {
+      const token = localStorage.getItem('admin-token');
+      
+      // First, try to directly submit a test RSVP through the regular API endpoint
+      console.log('Creating test RSVP for event:', selectedEventForRsvp);
+      
+      const testData = {
+        eventSlug: selectedEventForRsvp,
+        name: "Test User",
+        email: `test-${Date.now()}@example.com`,
+        guests: 2,
+        notes: "This is a test RSVP created from admin panel"
+      };
+      
+      // Submit via the regular RSVP API
+      const response = await fetch('/api/events/rsvp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testData)
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Failed to create test RSVP:', result);
+        setRsvpError(`Failed to create test RSVP: ${result.message}`);
+        setDebugInfo({
+          error: true,
+          status: response.status,
+          message: result.message,
+          data: testData
+        });
+        return;
+      }
+      
+      console.log('Successfully created test RSVP:', result);
+      setDebugInfo({
+        success: true,
+        message: 'Test RSVP created successfully',
+        response: result,
+        data: testData
+      });
+      
+      // Refresh the RSVP list
+      fetchRsvpsForEvent(selectedEventForRsvp);
+      
+    } catch (err) {
+      console.error('Error creating test RSVP:', err);
+      setRsvpError('Error creating test RSVP. See console for details.');
+      setDebugInfo({
+        error: true,
+        message: String(err)
+      });
+    } finally {
+      setIsLoadingRsvps(false);
+    }
+  };
+
+  const exportRsvpsToCSV = () => {
+    if (rsvps.length === 0) return
+    
+    // Find the event details for the header
+    const selectedEvent = events.find(event => event.id === selectedEventForRsvp)
+    
+    // Convert RSVPs to CSV
+    const headers = ['Name', 'Email', 'Guests', 'Status', 'Notes', 'RSVP Date']
+    
+    // Add headers row
+    let csvContent = headers.join(',') + '\n'
+    
+    // Add data rows
+    rsvps.forEach(rsvp => {
+      const row = [
+        `"${rsvp.name.replace(/"/g, '""')}"`, // Handle quotes in names
+        `"${rsvp.email.replace(/"/g, '""')}"`,
+        rsvp.guests,
+        rsvp.status,
+        `"${(rsvp.notes || '').replace(/"/g, '""')}"`,
+        new Date(rsvp.created_at).toLocaleString()
+      ]
+      csvContent += row.join(',') + '\n'
+    })
+    
+    // Create a Blob and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', `${selectedEvent?.title.replace(/\s+/g, '-')}_RSVPs_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const handleLogout = () => {
@@ -353,6 +607,7 @@ export default function AdminDashboard() {
             <TabsList className="mb-4">
               <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
               <TabsTrigger value="events">Events</TabsTrigger>
+              <TabsTrigger value="rsvps">RSVPs</TabsTrigger>
             </TabsList>
             
             <TabsContent value="subscribers">
@@ -374,6 +629,71 @@ export default function AdminDashboard() {
                 </Button>
               </div>
             </TabsContent>
+            
+            <TabsContent value="rsvps">
+              {events.length > 0 && (
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                  <div className="flex-1 w-full md:w-auto">
+                    <Label htmlFor="event-select" className="mb-2 block text-sm">Select Event</Label>
+                    <Select 
+                      value={selectedEventForRsvp} 
+                      onValueChange={handleEventSelectionForRsvp}
+                    >
+                      <SelectTrigger className="bg-black/50 border-gray-700">
+                        <SelectValue placeholder="Select an event" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-black border-gray-700">
+                        {events.map(event => (
+                          <SelectItem key={event.id} value={event.id}>
+                            {event.title} - {event.date}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2 mt-4 md:mt-8">
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={fetchAllRsvps}
+                        variant="outline" 
+                        className="border-blue-500 text-blue-300 hover:bg-blue-900/20"
+                      >
+                        View All RSVPs
+                      </Button>
+                      
+                      <Button 
+                        onClick={createTestRsvp}
+                        variant="outline" 
+                        className="border-purple-500 text-purple-300 hover:bg-purple-900/20"
+                      >
+                        Create Test RSVP
+                      </Button>
+                      
+                      {rsvps.length > 0 && (
+                        <Button 
+                          onClick={exportRsvpsToCSV}
+                          variant="outline" 
+                          className="border-green-500 text-green-300 hover:bg-green-900/20"
+                        >
+                          <Download className="h-4 w-4 mr-2" /> Export to CSV
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {debugInfo && (
+                      <div className="text-xs bg-gray-900 p-2 rounded border border-gray-700 mt-2 overflow-auto max-h-40">
+                        <pre className="text-gray-300">{JSON.stringify(debugInfo, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              <div className="text-sm text-gray-400 mb-2">
+                {rsvps.length} RSVPs for this event
+              </div>
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
@@ -391,7 +711,9 @@ export default function AdminDashboard() {
               const token = localStorage.getItem('admin-token') || ''
               if (activeTab === 'subscribers') {
                 fetchSubscribers(token)
-              } else {
+              } else if (activeTab === 'events') {
+                fetchEvents(token)
+              } else if (activeTab === 'rsvps') {
                 fetchEvents(token)
               }
             }}
@@ -430,63 +752,136 @@ export default function AdminDashboard() {
             </div>
           </Card>
         )
-      ) : events.length === 0 ? (
-        <Card className="bg-black/80 border border-purple-900/50 p-6 text-center">
-          <p className="text-gray-400">No events found.</p>
-        </Card>
-      ) : (
-        <Card className="bg-black/80 border border-purple-900/50 overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-purple-900/50">
-                  <TableHead className="text-purple-300">Title</TableHead>
-                  <TableHead className="text-purple-300">Date</TableHead>
-                  <TableHead className="text-purple-300">Location</TableHead>
-                  <TableHead className="text-purple-300">Featured</TableHead>
-                  <TableHead className="text-purple-300">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {events.map((event) => (
-                  <TableRow key={event.id} className="border-purple-900/30">
-                    <TableCell className="text-gray-300 font-medium">{event.title}</TableCell>
-                    <TableCell className="text-gray-300">{event.date}</TableCell>
-                    <TableCell className="text-gray-300">{event.location}</TableCell>
-                    <TableCell className="text-gray-300">
-                      {event.featured ? (
-                        <span className="inline-block px-2 py-1 bg-green-900/30 text-green-400 rounded-md text-xs">
-                          Featured
-                        </span>
-                      ) : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="text-blue-400 border-blue-900/50 hover:bg-blue-900/20"
-                          onClick={() => handleEditEvent(event)}
-                        >
-                          Edit
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="text-red-400 border-red-900/50 hover:bg-red-900/20"
-                          onClick={() => handleDeleteEvent(event.slug)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </TableCell>
+      ) : activeTab === 'events' ? (
+        events.length === 0 ? (
+          <Card className="bg-black/80 border border-purple-900/50 p-6 text-center">
+            <p className="text-gray-400">No events found.</p>
+          </Card>
+        ) : (
+          <Card className="bg-black/80 border border-purple-900/50 overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-purple-900/50">
+                    <TableHead className="text-purple-300">Title</TableHead>
+                    <TableHead className="text-purple-300">Date</TableHead>
+                    <TableHead className="text-purple-300">Location</TableHead>
+                    <TableHead className="text-purple-300">Featured</TableHead>
+                    <TableHead className="text-purple-300">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {events.map((event) => (
+                    <TableRow key={event.id} className="border-purple-900/30">
+                      <TableCell className="text-gray-300 font-medium">{event.title}</TableCell>
+                      <TableCell className="text-gray-300">{event.date}</TableCell>
+                      <TableCell className="text-gray-300">{event.location}</TableCell>
+                      <TableCell className="text-gray-300">
+                        {event.featured ? (
+                          <span className="inline-block px-2 py-1 bg-green-900/30 text-green-400 rounded-md text-xs">
+                            Featured
+                          </span>
+                        ) : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-blue-400 border-blue-900/50 hover:bg-blue-900/20"
+                            onClick={() => handleEditEvent(event)}
+                          >
+                            Edit
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-400 border-red-900/50 hover:bg-red-900/20"
+                            onClick={() => handleDeleteEvent(event.slug)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        )
+      ) : activeTab === 'rsvps' ? (
+        events.length === 0 ? (
+          <Card className="bg-black/80 border border-purple-900/50 p-6 text-center">
+            <p className="text-gray-400">No events found. Create an event first to manage RSVPs.</p>
+          </Card>
+        ) : isLoadingRsvps ? (
+          <div className="flex justify-center my-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
           </div>
-        </Card>
-      )}
+        ) : rsvpError ? (
+          <Card className="bg-black/80 border border-red-900/50 p-4">
+            <p className="text-red-400">{rsvpError}</p>
+            <Button 
+              className="mt-4 bg-purple-800" 
+              onClick={() => fetchRsvpsForEvent(selectedEventForRsvp)}
+            >
+              Try Again
+            </Button>
+          </Card>
+        ) : rsvps.length === 0 ? (
+          <Card className="bg-black/80 border border-purple-900/50 p-6 text-center">
+            <p className="text-gray-400">No RSVPs found for this event.</p>
+          </Card>
+        ) : (
+          <Card className="bg-black/80 border border-purple-900/50 overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-purple-900/50">
+                    <TableHead className="text-purple-300">Name</TableHead>
+                    <TableHead className="text-purple-300">Email</TableHead>
+                    <TableHead className="text-purple-300">Guests</TableHead>
+                    <TableHead className="text-purple-300">Status</TableHead>
+                    <TableHead className="text-purple-300">Notes</TableHead>
+                    <TableHead className="text-purple-300">RSVP Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rsvps.map((rsvp) => (
+                    <TableRow key={rsvp.id} className="border-purple-900/30">
+                      <TableCell className="text-gray-300 font-medium">{rsvp.name}</TableCell>
+                      <TableCell className="text-gray-300">{rsvp.email}</TableCell>
+                      <TableCell className="text-gray-300">{rsvp.guests}</TableCell>
+                      <TableCell className="text-gray-300">
+                        <span className={`inline-block px-2 py-1 rounded-md text-xs ${
+                          rsvp.status === 'confirmed' 
+                            ? 'bg-green-900/30 text-green-400' 
+                            : rsvp.status === 'waitlisted' 
+                              ? 'bg-yellow-900/30 text-yellow-400'
+                              : 'bg-red-900/30 text-red-400'
+                        }`}>
+                          {rsvp.status.charAt(0).toUpperCase() + rsvp.status.slice(1)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-gray-300">
+                        {rsvp.notes ? (
+                          <div className="max-w-xs truncate" title={rsvp.notes}>
+                            {rsvp.notes}
+                          </div>
+                        ) : '—'}
+                      </TableCell>
+                      <TableCell className="text-gray-400 text-sm">
+                        {formatDate(rsvp.created_at)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        )
+      ) : null}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-black/90 border border-purple-900/50 text-white max-w-3xl">

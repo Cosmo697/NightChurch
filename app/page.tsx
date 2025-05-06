@@ -10,6 +10,7 @@ import { CalendarDays, Clock, MapPin, Music, Tent, Users } from 'lucide-react'
 import RadioPlayer from "@/components/radio-player"
 import Portal from "@/components/portal"
 import EasterEgg from "@/components/easter-egg"
+import { RsvpDialog } from "@/components/rsvp-dialog"
 import { usePuzzle } from "@/context/puzzle-context"
 import { Event } from "@/lib/events"
 
@@ -19,6 +20,7 @@ export default function Home() {
   const [hasEntered, setHasEntered] = useState(false)
   const [featuredEvent, setFeaturedEvent] = useState<Event | null>(null)
   const [isLoadingEvent, setIsLoadingEvent] = useState(true)
+  const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false)
 
   // Check for portal bypass in sessionStorage
   useEffect(() => {
@@ -214,13 +216,11 @@ export default function Home() {
                         </Button>
                         {featuredEvent.ticketsAvailable && (
                           <Button
-                            asChild
                             size="lg"
                             className="bg-pink-600 hover:bg-pink-700"
+                            onClick={() => setIsRsvpDialogOpen(true)}
                           >
-                            <a href={featuredEvent.rsvpLink || featuredEvent.ticketLink} target="_blank" rel="noopener noreferrer">
-                              RSVP Now
-                            </a>
+                            RSVP Now
                           </Button>
                         )}
                       </div>
@@ -335,6 +335,15 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      {/* RSVP Dialog */}
+      {featuredEvent && (
+        <RsvpDialog 
+          event={featuredEvent} 
+          isOpen={isRsvpDialogOpen} 
+          onOpenChange={setIsRsvpDialogOpen} 
+        />
+      )}
     </>
   )
 }

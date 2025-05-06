@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
+import { getAdminSupabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
 // Get secret key from environment variable
@@ -57,6 +57,10 @@ export async function GET(request: Request) {
     }
 
     // Token is valid, fetch subscribers from Supabase
+    // Use the admin Supabase client instead of the public one
+    const supabase = getAdminSupabase();
+    
+    console.log('Fetching subscribers using admin Supabase client');
     const { data: subscribers, error } = await supabase
       .from('subscribers')
       .select('*')

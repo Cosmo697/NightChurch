@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,7 +10,13 @@ export default function AdminAuth() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  // Use useEffect to mark when the component has mounted
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,25 +59,44 @@ export default function AdminAuth() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password"
+          {/* Only render the form after client-side hydration is complete */}
+          {mounted ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <div className="relative">
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter admin password"
+                    className="w-full"
+                    data-lpignore="true"
+                    autoComplete="off"
+                    // Add additional attributes to prevent password manager interference
+                    aria-autocomplete="none"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
+                </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+              </div>
+              <Button 
+                type="submit" 
                 className="w-full"
-              />
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Authenticating...' : 'Access Dashboard'}
+              </Button>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="w-full h-10 bg-gray-800/50 rounded animate-pulse"></div>
+              </div>
+              <div className="w-full h-10 bg-gray-800/50 rounded animate-pulse"></div>
             </div>
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Authenticating...' : 'Access Dashboard'}
-            </Button>
-          </form>
+          )}
         </CardContent>
       </Card>
     </div>

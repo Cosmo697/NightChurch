@@ -49,3 +49,53 @@ CREATE TRIGGER set_updated_at
 BEFORE UPDATE ON events
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
+
+-- Add RSVP table to the existing schema
+
+-- Create RSVPs table to track event attendees
+CREATE TABLE IF NOT EXISTS public.rsvps (
+    id SERIAL PRIMARY KEY,
+    event_id TEXT NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    guests INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    status TEXT DEFAULT 'confirmed' CHECK (status IN ('confirmed', 'cancelled', 'waitlisted')),
+    notes TEXT
+);
+
+-- Create an index for faster lookups
+CREATE INDEX IF NOT EXISTS rsvp_event_id_idx ON public.rsvps (event_id);
+CREATE INDEX IF NOT EXISTS rsvp_email_idx ON public.rsvps (email);
+
+-- Add RLS (Row Level Security) policies for RSVPs
+ALTER TABLE public.rsvps ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow inserting by anyone (for public RSVPs)
+CREATE POLICY "Allow public RSVP creation" ON public.rsvps
+    FOR INSERT
+    TO public
+    WITH CHECK (true);
+
+-- Create policy for admins to view all RSVPs
+CREATE POLICY "Allow admin to view all RSVPs" ON public.rsvps
+    FOR SELECT
+    TO authenticated
+    USING (true);
+    
+-- Create a function to get RSVP count for an event
+CREATE OR REPLACE FUNCTION public.get_event_rsvp_count(event_id TEXT)
+RETURNS INTEGER AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM public.rsvps WHERE event_id = $1 AND status = 'confirmed');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create a function to check if an email has already RSVP'd for an event
+CREATE OR REPLACE FUNCTION public.has_rsvp_for_event(event_id TEXT, email TEXT)
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (SELECT 1 FROM public.rsvps WHERE event_id = $1 AND email = $2);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { RsvpDialog } from "@/components/rsvp-dialog"
 import { type Event } from "@/lib/events"
 
 // Helper function to generate calendar links
@@ -30,6 +31,7 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
   const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false);
   
   // Get current date for location reveal logic
   const currentDate = new Date()
@@ -98,7 +100,7 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
           </Link>
         </Button>
       </div>
-
+      
       <div className="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8">
         <Image
           src={event.image}
@@ -119,7 +121,7 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
           </p>
         </div>
       </div>
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <Card className="bg-black/50 border border-purple-900/50">
@@ -133,13 +135,11 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
                 {event.ticketsAvailable ? (
                   <div className="flex flex-col items-center">
                     <Button 
-                      asChild 
                       size="lg" 
                       className="mb-2 bg-pink-600 hover:bg-pink-700 text-white px-8 py-6 text-lg"
+                      onClick={() => setIsRsvpDialogOpen(true)}
                     >
-                      <a href={event.rsvpLink || event.ticketLink} target="_blank" rel="noopener noreferrer">
-                        RSVP Now
-                      </a>
+                      RSVP Now
                     </Button>
                     <p className="text-sm text-muted-foreground">
                       Let us know you're coming - spaces are limited
@@ -334,6 +334,13 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
           </Card>
         </div>
       </div>
+      
+      {/* RSVP Dialog */}
+      <RsvpDialog 
+        event={event} 
+        isOpen={isRsvpDialogOpen} 
+        onOpenChange={setIsRsvpDialogOpen} 
+      />
     </div>
   )
 }

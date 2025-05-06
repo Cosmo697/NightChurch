@@ -7,6 +7,7 @@ import { CalendarDays, Clock, MapPin, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { RsvpDialog } from "@/components/rsvp-dialog"
 import { type Event } from "@/lib/events"
 
 // Helper function to generate calendar links
@@ -79,6 +80,8 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false);
   
   // Get current date for location reveal logic
   const currentDate = new Date()
@@ -113,6 +116,11 @@ export default function EventsPage() {
   const featuredEvent = events.find(event => event.featured);
   // Get non-featured events
   const otherEvents = events.filter(event => !event.featured);
+
+  const handleRsvpClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsRsvpDialogOpen(true);
+  };
 
   return (
     <div className="container py-12">
@@ -215,11 +223,21 @@ export default function EventsPage() {
             </CardContent>
             <CardFooter className="p-6 pt-0 flex justify-between items-center">
               <p className="text-sm text-muted-foreground">Presented by {featuredEvent.presentedBy}</p>
-              <Button asChild>
-                <Link href={`/events/${featuredEvent.slug}`} className="flex items-center">
-                  Details <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <div className="flex gap-2">
+                {featuredEvent.ticketsAvailable && (
+                  <Button 
+                    onClick={() => handleRsvpClick(featuredEvent)}
+                    className="bg-pink-600 hover:bg-pink-700"
+                  >
+                    RSVP Now
+                  </Button>
+                )}
+                <Button asChild>
+                  <Link href={`/events/${featuredEvent.slug}`} className="flex items-center">
+                    Details <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </div>
@@ -284,25 +302,38 @@ export default function EventsPage() {
                 <p className="text-sm">{event.summary}</p>
               </CardContent>
               <CardFooter className="p-4 pt-0">
-                <Button 
-                  asChild
-                  variant={event.ticketsAvailable ? "default" : "outline"}
-                  className={`w-full ${event.ticketsAvailable ? "" : ""}`}
-                >
-                  {event.ticketsAvailable ? (
-                    <a href={event.ticketLink} target="_blank" rel="noopener noreferrer">
-                      Get Tickets
-                    </a>
-                  ) : (
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                  {event.ticketsAvailable && (
+                    <Button 
+                      onClick={() => handleRsvpClick(event)}
+                      className="bg-pink-600 hover:bg-pink-700 sm:flex-1"
+                    >
+                      RSVP Now
+                    </Button>
+                  )}
+                  <Button 
+                    asChild
+                    variant={event.ticketsAvailable ? "outline" : "default"}
+                    className="sm:flex-1"
+                  >
                     <Link href={`/events/${event.slug}`}>
                       View Details
                     </Link>
-                  )}
-                </Button>
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           ))}
         </div>
+      )}
+
+      {/* RSVP Dialog */}
+      {selectedEvent && (
+        <RsvpDialog 
+          event={selectedEvent} 
+          isOpen={isRsvpDialogOpen} 
+          onOpenChange={setIsRsvpDialogOpen} 
+        />
       )}
     </div>
   )

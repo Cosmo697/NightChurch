@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 const navItems = [
   { name: "Home", path: "/" },
   { name: "Gallery", path: "/gallery" },
+  { name: "Events", path: "/events" },
   { name: "DJs", path: "/djs" },
   { name: "Visual Art", path: "/visual-art" },
   { name: "Merch", path: "/merch" },

@@ -114,21 +114,8 @@ export default function Home() {
             <div className="max-w-2xl mx-auto mb-8 bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-purple-900/30">
               <h3 className="text-xl font-bold mb-3 text-purple-200">Listen to Night Church Radio</h3>
               <RadioPlayer />
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-pink-600 hover:bg-pink-700">
-                <Link href="/gallery">View Gallery</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-purple-500 text-purple-300 hover:bg-purple-950/50"
-              >
-                <Link href="/contact">Contact Us</Link>
-              </Button>
-            </div>
+            </div>            
+
           </div>
         </section>
 

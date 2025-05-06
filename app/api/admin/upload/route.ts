@@ -4,11 +4,15 @@ import crypto from 'crypto';
 
 // Get secret key from environment variable
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY;
-const IMGBB_API_KEY = process.env.IMGBB_API_KEY || 'd2692625b6d0f6047b53d04003cc89b';
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
 
 // Check if environment variables are defined
 if (!SECRET_KEY) {
   console.error('Missing environment variable: ADMIN_SECRET_KEY');
+}
+
+if (!IMGBB_API_KEY) {
+  console.error('Missing environment variable: IMGBB_API_KEY');
 }
 
 // Verify admin token helper function
@@ -52,6 +56,13 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401 }
+      );
+    }
+
+    if (!IMGBB_API_KEY) {
+      return NextResponse.json(
+        { message: 'Server configuration error: Missing imgBB API key' },
+        { status: 500 }
       );
     }
 

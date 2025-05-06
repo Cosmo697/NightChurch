@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Card } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog"
 import { DancerFigure } from "@/components/dancing-figures"
 import { Button } from "@/components/ui/button"
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize, Minimize } from "lucide-react"
@@ -247,6 +247,11 @@ export default function GalleryPage() {
             isFullscreen ? 'max-w-none w-screen h-screen rounded-none m-0' : 'max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] sm:p-2'
           }`}
         >
+          {/* Add DialogTitle for accessibility - visually hidden but available to screen readers */}
+          <DialogTitle className="sr-only">
+            {selectedImage ? selectedImage.alt || "Gallery image" : "Image viewer"}
+          </DialogTitle>
+          
           {/* Close button */}
           <DialogClose className="absolute right-4 top-4 z-10 bg-black/50 p-2 rounded-full">
             <X className="h-5 w-5 text-white" />

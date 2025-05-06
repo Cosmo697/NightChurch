@@ -1,0 +1,24 @@
+{
+  "id": "autumn-equinox",
+  "slug": "close-encounters",
+  "title": "Close Encounters",
+  "subtitle": "Summoning the Mothership",
+  "date": "May 30 - June 1, 2025",
+  "time": "6pm",
+  "location": "El Mirage Dry Lakebed",
+  "image": "/uploads/events/1746492560439-ChatGPT-Image-May-5,-2025,-05_47_48-PM.png",
+  "badgeText": "Campout",
+  "badgeColor": "bg-amber-600 hover:bg-amber-700",
+  "summary": "A weekend campout on mars with our alien friends.",
+  "presentedBy": "Night Church",
+  "featured": false,
+  "ticketsAvailable": false,
+  "registrationOpens": "",
+  "organizers": [
+    {
+      "name": "Night Church",
+      "instagram": "socalnightchurch",
+      "website": "socalnightchurch.com"
+    }
+  ]
+}

@@ -11,11 +11,14 @@ import RadioPlayer from "@/components/radio-player"
 import Portal from "@/components/portal"
 import EasterEgg from "@/components/easter-egg"
 import { usePuzzle } from "@/context/puzzle-context"
+import { Event } from "@/lib/events"
 
 export default function Home() {
   const { portalSolved, setPortalSolved } = usePuzzle()
   const [showPortal, setShowPortal] = useState(!portalSolved)
   const [hasEntered, setHasEntered] = useState(false)
+  const [featuredEvent, setFeaturedEvent] = useState<Event | null>(null)
+  const [isLoadingEvent, setIsLoadingEvent] = useState(true)
 
   // Check for portal bypass in sessionStorage
   useEffect(() => {
@@ -28,11 +31,30 @@ export default function Home() {
     }
   }, [])
 
+  // Fetch featured event from API
+  useEffect(() => {
+    fetch('/api/events')
+      .then(response => response.json())
+      .then(data => {
+        const featured = data.events.find((event: Event) => event.featured) || data.events[0]
+        setFeaturedEvent(featured)
+        setIsLoadingEvent(false)
+      })
+      .catch(error => {
+        console.error('Error loading events:', error)
+        setIsLoadingEvent(false)
+      })
+  }, [])
+
   // Handle direct entry without solving puzzle
   const handlePortalEnter = () => {
     setShowPortal(false)
     setHasEntered(true)
   }
+
+  // Get current date for location reveal logic
+  const currentDate = new Date()
+  const locationRevealDate = new Date(2025, 4, 4) // May 4, 2025
 
   return (
     <>
@@ -83,21 +105,9 @@ export default function Home() {
                 priority
               />
               
-              {/* Hidden easter egg in the footer - only visible after portal is solved */}
-              <div className="absolute bottom-0 right-[10%] w-8 h-8">
-                <EasterEgg 
-                  id="echoes" 
-                  trigger="click"
-                  hintText="Echoes of Unity"
-                  unlockText="Create your personal connection to Night Church's inner realm."
-                  destination="/hidden/account-creation"
-                >
-                  <div className="w-8 h-8"></div>
-                </EasterEgg>
-              </div>
             </div>
             <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto text-purple-100 text-shadow">
-              Immersive desert raves in Southern California
+              
             </p>
             
             {/* Radio Player integrated into hero section */}
@@ -127,113 +137,130 @@ export default function Home() {
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center glow-text">Upcoming Events</h2>
             <div className="max-w-3xl mx-auto">
-              <Card className="bg-black/50 border border-purple-900/50 overflow-hidden">
-                <div className="relative h-64 md:h-80">
-                  <Image
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Ecoshire-9roBa65uiHaXls0a60XoaDKCuyHMvw.webp"
-                    alt="RECONNECT & RISE event - Outdoor desert gathering with canopies and atmospheric lighting"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 p-6">
-                    <h3 className="text-3xl md:text-4xl font-bold mb-2 glow-text">RECONNECT & RISE</h3>
-                    <p className="text-xl text-purple-200">
-                      A Night to Celebrate Our Community
-                    </p>
-                  </div>
+              {isLoadingEvent ? (
+                <div className="text-center p-12">
+                  <div className="animate-spin h-12 w-12 border-t-2 border-b-2 border-purple-500 rounded-full mx-auto mb-4"></div>
+                  <p className="text-purple-300">Loading events...</p>
                 </div>
-                <CardContent className="p-6">
-                  <div className="flex flex-col gap-6">
-                    <p className="text-lg text-muted-foreground">
-                      "To dance with our shadows, ground in our truth, and rise in our light, together."
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-purple-900/30 p-2 rounded-md">
-                          <CalendarDays className="h-5 w-5 text-purple-300" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Date</h4>
-                          <p className="text-sm text-muted-foreground">June 21-22, 2025</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <div className="bg-purple-900/30 p-2 rounded-md">
-                          <Clock className="h-5 w-5 text-purple-300" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Time</h4>
-                          <p className="text-sm text-muted-foreground">Saturday 4 PM - Sunday 7 AM</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <div className="bg-purple-900/30 p-2 rounded-md">
-                          <MapPin className="h-5 w-5 text-purple-300" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Location</h4>
-                          {new Date() > new Date(2025, 4, 4) ? (
-                            <p className="text-sm text-green-400">Skydive Lake Elsinore</p>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">To be announced</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <div className="bg-purple-900/30 p-2 rounded-md">
-                          <Users className="h-5 w-5 text-purple-300" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">Presented By</h4>
-                          <p className="text-sm text-muted-foreground">Risk2Rebirth & Night Church</p>
-                        </div>
-                      </div>
+              ) : featuredEvent ? (
+                <Card className="bg-black/50 border border-purple-900/50 overflow-hidden">
+                  <div className="relative h-64 md:h-80">
+                    <Image
+                      src={featuredEvent.image}
+                      alt={`${featuredEvent.title} - ${featuredEvent.subtitle}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    <div className="absolute top-4 left-4">
+                      <Badge className={`${featuredEvent.badgeColor} text-white px-3 py-1 text-sm font-medium`}>
+                        {featuredEvent.badgeText}
+                      </Badge>
                     </div>
-
-                    <div>
-                      <h4 className="font-medium mb-2">Event Highlights</h4>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                        <li className="flex items-center gap-2">
-                          <Music className="h-4 w-4 text-pink-400" />
-                          <span>Night Church sound system & DJ sets</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="h-4 w-4 flex items-center justify-center text-pink-400">✨</span>
-                          <span>Immersive projection-mapped visuals</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="h-4 w-4 flex items-center justify-center text-pink-400">🔥</span>
-                          <span>Fire spinners & flow artists</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="h-4 w-4 flex items-center justify-center text-pink-400">🧘</span>
-                          <span>Holistic healing zones</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span className="h-4 w-4 flex items-center justify-center text-pink-400">🥁</span>
-                          <span>Drum circles & sunrise rituals</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="lg"
-                        className="border-purple-500 text-purple-300 hover:bg-purple-950/50"
-                      >
-                        <Link href="/events/reconnect-and-rise">View Details</Link>
-                      </Button>
+                    <div className="absolute bottom-0 left-0 p-6">
+                      <h3 className="text-3xl md:text-4xl font-bold mb-2 glow-text">{featuredEvent.title}</h3>
+                      <p className="text-xl text-purple-200">
+                        {featuredEvent.subtitle}
+                      </p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  <CardContent className="p-6">
+                    <div className="flex flex-col gap-6">
+                      <p className="text-lg text-muted-foreground">
+                        {featuredEvent.summary}
+                      </p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="bg-purple-900/30 p-2 rounded-md">
+                            <CalendarDays className="h-5 w-5 text-purple-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Date</h4>
+                            <p className="text-sm text-muted-foreground">{featuredEvent.date}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="bg-purple-900/30 p-2 rounded-md">
+                            <Clock className="h-5 w-5 text-purple-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Time</h4>
+                            <p className="text-sm text-muted-foreground">{featuredEvent.time}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="bg-purple-900/30 p-2 rounded-md">
+                            <MapPin className="h-5 w-5 text-purple-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Location</h4>
+                            {currentDate > locationRevealDate ? (
+                              <p className="text-sm text-green-400">{featuredEvent.location}</p>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">To be announced</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="bg-purple-900/30 p-2 rounded-md">
+                            <Users className="h-5 w-5 text-purple-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Presented By</h4>
+                            <p className="text-sm text-muted-foreground">{featuredEvent.presentedBy}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="lg"
+                          className="border-purple-500 text-purple-300 hover:bg-purple-950/50"
+                        >
+                          <Link href={`/events/${featuredEvent.slug}`}>View Details</Link>
+                        </Button>
+                        {featuredEvent.ticketsAvailable && (
+                          <Button
+                            asChild
+                            size="lg"
+                            className="bg-pink-600 hover:bg-pink-700"
+                          >
+                            <a href={featuredEvent.rsvpLink || featuredEvent.ticketLink} target="_blank" rel="noopener noreferrer">
+                              RSVP Now
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="bg-black/50 border border-purple-900/50 p-6 text-center">
+                  <p className="text-muted-foreground">No upcoming events currently scheduled.</p>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="mt-4 border-purple-500 text-purple-300 hover:bg-purple-950/50"
+                  >
+                    <Link href="/events">View Past Events</Link>
+                  </Button>
+                </Card>
+              )}
+            </div>
+            <div className="mt-6 text-center">
+              <Button
+                asChild
+                variant="link"
+                className="text-purple-300 hover:text-purple-200"
+              >
+                <Link href="/events">View All Events →</Link>
+              </Button>
             </div>
           </div>
         </section>

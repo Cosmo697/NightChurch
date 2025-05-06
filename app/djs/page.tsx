@@ -2,7 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { StokedFigure } from "@/components/dancing-figures"
 
 const djs = [
   {
@@ -11,7 +10,7 @@ const djs = [
     role: "Co-Founder & Resident DJ",
     image: "/images/djs/Mortl_Profile.webp",
     genres: ["Psytrance", "Psycore", "Psybient", "Techno", "IDM", "Folk"],
-    bio: "Michael Mortl is a Southern California–based electronic music producer and projection-mapping artist. Alongside Jon (Madmanski) and Travis (Metaperspective), he co-founded Night Church, a series of word-of-mouth desert gatherings. After his first encounter with experimental soundscapes at El Mirage Dry Lakebed in 2006, Mortl developed a signature DJ style that blends psytrance, ambient textures, and tribal rhythms over high-fidelity stereo rigs beneath open skies. The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church’s ethos of collective artistic exchange and personal discovery.",
+    bio: "Mortl is an electronic music producer, projection artist, and event organizer. He co-founded Night Church alongside Madmanski and Metaperspective. His sets explore the experimental edges of electronic music, ranging from test tones used to probe a space’s acoustic resonance to high-intensity 300 BPM psycore.",
     hasFullProfile: true,
   },
   {
@@ -119,10 +118,7 @@ export default function DJsPage() {
   return (
     <div className="container py-12 relative">
       {/* Moved dancing figure to bottom-left corner */}
-      <div className="fixed bottom-[50%] left-0 z-50">
-        <StokedFigure delay={500} />
-      </div>
-
+      
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">DJs & Artists</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Meet the talented DJs and artists who create the sonic landscape of Night Church

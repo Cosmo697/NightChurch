@@ -1,3 +1,7 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { use } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, Calendar, MapPin } from 'lucide-react'
@@ -6,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import SoundcloudEmbed from "@/components/soundcloud-embed"
 import { InterpretiveFigure } from "@/components/dancing-figures"
+import { type Event } from "@/lib/events"
 
 // Update the getDjData function to use the new cover image for all DJs
 const getDjData = (id: string) => {
@@ -22,13 +27,11 @@ const getDjData = (id: string) => {
       
       
 
-      The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church’s ethos of collective artistic exchange and personal discovery.`,
+      The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church's ethos of collective artistic exchange and personal discovery.`,
       genres: ["Psytrance", "Techno", "Ambient", "Experimental"],
       soundcloudUrl:
         "https://soundcloud.com/mmortl/sets/tracks-and-mixes-by-mortl?si=36d6d1805b324bc79c32d03211d6ce64&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
-      upcomingEvents: [
-        { name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." },
-      ],
+      eventSlugs: ["reconnect-and-rise"]
     },
     madmanski: {
       name: "Madmanski",
@@ -40,7 +43,7 @@ const getDjData = (id: string) => {
       Drawing from influences across house, techno, and breaks, Madmanski's sets are characterized by driving rhythms, unexpected transitions, and moments of pure euphoria that keep dancers moving throughout the night.`,
       genres: ["House", "Techno", "Breaks"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "", date: "", location: "" }],
+      eventSlugs: []
     },
     "k-lala": {
       name: "K~lala",
@@ -49,10 +52,10 @@ const getDjData = (id: string) => {
       coverImage: "/images/cover/Cover_02.webp",
       bio: `K~lala started DJing after crossing paths with the NightChurch crew, and the connection was instant. What began as curiosity quickly became a deep passion. Self-taught and still learning, K~lala approaches every mix as a way to express, explore, and bring people into something honest and shared.
 
-Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Whether she’s building tension or letting the music breathe, there’s always heart behind the sound. If you’re looking for something raw, genre-blending, and emotionally tuned—K~lala offers a unique experience shaped by instinct and soul.`,
+Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Whether she's building tension or letting the music breathe, there's always heart behind the sound. If you're looking for something raw, genre-blending, and emotionally tuned—K~lala offers a unique experience shaped by instinct and soul.`,
       genres: ["Psydub", "Psycore", "Downtempo", "Tribal House"],
       soundcloudUrl: "https://soundcloud.com/kayla-hoxie/sets/klala",
-      upcomingEvents: [{ name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." }],
+      eventSlugs: ["reconnect-and-rise"]
     },
     "d-davis": {
       name: "D.Davis",
@@ -64,7 +67,7 @@ Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Wh
       With a keen ear for emerging trends and underground sounds, D.Davis brings fresh energy to the Night Church collective, constantly evolving their style while maintaining a signature sound.`,
       genres: ["Techno", "Minimal", "Experimental"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "Reconnect & Rise", date: "June 21, 2025", location: "S.E." }],
+      eventSlugs: ["reconnect-and-rise"]
     },
     emotep: {
       name: "Emotep",
@@ -76,15 +79,41 @@ Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Wh
       As both a DJ and producer, Emotep brings original compositions into their sets, offering unique sounds that can't be heard anywhere else.`,
       genres: ["Downtempo", "Ambient", "World Fusion"],
       soundcloudUrl: "https://soundcloud.com",
-      upcomingEvents: [{ name: "", date: "", location: "J" }],
-    },
+      eventSlugs: []
+    }
   }
 
   return djs[id as keyof typeof djs] || null
 }
 
 export default function DjProfilePage({ params }: { params: { id: string } }) {
-  const dj = getDjData(params.id)
+  // Use React.use() to properly handle params
+  const resolvedParams = use(params);
+  const djId = resolvedParams.id;
+  const dj = getDjData(djId);
+  
+  const [events, setEvents] = useState<Event[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Fetch all events
+    fetch('/api/events')
+      .then(response => response.json())
+      .then(data => {
+        // Filter events to only include those the DJ is part of
+        if (dj && dj.eventSlugs.length > 0) {
+          const djEvents = data.events.filter((event: Event) => 
+            dj.eventSlugs.includes(event.slug)
+          )
+          setEvents(djEvents)
+        }
+        setIsLoading(false)
+      })
+      .catch(error => {
+        console.error('Error loading events:', error)
+        setIsLoading(false)
+      })
+  }, [dj])
 
   if (!dj) {
     return (
@@ -172,21 +201,31 @@ export default function DjProfilePage({ params }: { params: { id: string } }) {
             <CardContent className="p-6">
               <h3 className="text-xl font-bold mb-4">Upcoming Events</h3>
 
-              {dj.upcomingEvents.length > 0 ? (
+              {isLoading ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-purple-500"></div>
+                </div>
+              ) : events.length > 0 ? (
                 <div className="space-y-4">
-                  {dj.upcomingEvents.map((event, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="bg-purple-900/30 p-2 rounded-md">
-                        <Calendar className="h-5 w-5 text-purple-300" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{event.name}</h4>
-                        <p className="text-sm text-muted-foreground">{event.date}</p>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                          <MapPin className="h-3 w-3" />
-                          <span>{event.location}</span>
+                  {events.map((event) => (
+                    <div key={event.id} className="group">
+                      <Link href={`/events/${event.slug}`}>
+                        <div className="flex items-start gap-3 group-hover:bg-purple-900/10 p-2 rounded-md transition-colors">
+                          <div className="bg-purple-900/30 p-2 rounded-md">
+                            <Calendar className="h-5 w-5 text-purple-300" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium group-hover:text-purple-300 transition-colors">
+                              {event.title}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">{event.date}</p>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                              <MapPin className="h-3 w-3" />
+                              <span>{event.location}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      </Link>
                     </div>
                   ))}
                 </div>

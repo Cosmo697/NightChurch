@@ -1,0 +1,40 @@
+{
+  "id": "reconnect-and-rise",
+  "slug": "reconnect-and-rise",
+  "title": "RECONNECT & RISE",
+  "subtitle": "A Night to Celebrate Our Community",
+  "date": "June 21-22, 2025",
+  "time": "Saturday 4 PM - Sunday 7 AM",
+  "location": "Skydive Elsinore, 20701 Cereal St, Lake Elsinore, CA 92530",
+  "image": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Ecoshire-9roBa65uiHaXls0a60XoaDKCuyHMvw.webp",
+  "badgeText": "Boogie",
+  "badgeColor": "bg-pink-600 hover:bg-pink-700",
+  "summary": "Join us for an overnight celebration where we'll dance with our shadows, ground in our truth, and rise in our light, together.",
+  "presentedBy": "Risk2Rebirth & NightChurch & Amy Arends & DK",
+  "featured": true,
+  "ticketsAvailable": false,
+  "ticketLink": "https://example.com/tickets/reconnect-rise",
+  "registrationOpens": "May 8, 2025",
+  "organizers": [
+    {
+      "name": "Risk2Rebirth",
+      "website": "https://www.risk2rebirth.com/",
+      "instagram": "risk2rebirth"
+    },
+    {
+      "name": "NightChurch",
+      "instagram": "socalnightchurch",
+      "website": "socalnightchurch.com"
+    },
+    {
+      "name": "Amy Arends",
+      "instagram": "amyarends_soultions",
+      "website": "amyarends.com"
+    },
+    {
+      "name": "DK",
+      "instagram": "spacetravelerdk"
+    }
+  ],
+  "rsvpLink": "https://example.com/tickets/reconnect-rise"
+}

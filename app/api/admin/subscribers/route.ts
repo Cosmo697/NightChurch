@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSubscribersCollection } from '@/lib/mongodb';
+import supabase from '@/lib/supabase';
 import crypto from 'crypto';
 
 // Get secret key from environment variable
@@ -56,14 +56,29 @@ export async function GET(request: Request) {
       );
     }
 
-    // Token is valid, fetch subscribers from MongoDB
-    const subscribersCollection = await getSubscribersCollection();
-    const subscribers = await subscribersCollection
-      .find({})
-      .sort({ createdAt: -1 }) // Most recent first
-      .toArray();
+    // Token is valid, fetch subscribers from Supabase
+    const { data: subscribers, error } = await supabase
+      .from('subscribers')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    return NextResponse.json({ subscribers });
+    if (error) {
+      console.error('Error fetching subscribers:', error);
+      return NextResponse.json(
+        { message: 'Failed to fetch subscribers' },
+        { status: 500 }
+      );
+    }
+
+    // Map Supabase data to the format expected by the frontend
+    const formattedSubscribers = subscribers.map(sub => ({
+      _id: sub.id,
+      email: sub.email,
+      name: sub.name || 'Anonymous',
+      createdAt: sub.created_at
+    }));
+
+    return NextResponse.json({ subscribers: formattedSubscribers });
   } catch (error) {
     console.error('Error fetching subscribers:', error);
     return NextResponse.json(

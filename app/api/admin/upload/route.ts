@@ -1,15 +1,18 @@
 // filepath: c:\Websites\NightChurch\app\api\admin\upload\route.ts
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 import crypto from 'crypto';
 
 // Get secret key from environment variable
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY;
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
 
-// Check if environment variable is defined
+// Check if environment variables are defined
 if (!SECRET_KEY) {
   console.error('Missing environment variable: ADMIN_SECRET_KEY');
+}
+
+if (!IMGBB_API_KEY) {
+  console.error('Missing environment variable: IMGBB_API_KEY');
 }
 
 // Verify admin token helper function
@@ -45,14 +48,7 @@ function verifyAdminToken(request: Request) {
   return signature === expectedSignature;
 }
 
-// Helper to ensure upload directory exists
-async function ensureUploadDirectoryExists() {
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'events');
-  await fs.mkdir(uploadDir, { recursive: true });
-  return uploadDir;
-}
-
-// POST /api/admin/upload - Handle image uploads
+// POST /api/admin/upload - Handle image uploads using imgBB
 export async function POST(request: Request) {
   try {
     // Verify admin token
@@ -60,6 +56,13 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401 }
+      );
+    }
+
+    if (!IMGBB_API_KEY) {
+      return NextResponse.json(
+        { message: 'Server configuration error: Missing imgBB API key' },
+        { status: 500 }
       );
     }
 
@@ -83,23 +86,33 @@ export async function POST(request: Request) {
 
     // Get file buffer
     const buffer = await file.arrayBuffer();
-    const fileBuffer = Buffer.from(buffer);
+    const base64Image = Buffer.from(buffer).toString('base64');
 
-    // Generate a unique filename
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    // Create FormData for imgBB API
+    const imgbbFormData = new FormData();
+    imgbbFormData.append('key', IMGBB_API_KEY);
+    imgbbFormData.append('image', base64Image);
     
-    // Save the file
-    const uploadDir = await ensureUploadDirectoryExists();
-    const filePath = path.join(uploadDir, fileName);
+    // Upload to imgBB
+    const response = await fetch('https://api.imgbb.com/1/upload', {
+      method: 'POST',
+      body: imgbbFormData
+    });
     
-    await fs.writeFile(filePath, fileBuffer);
+    if (!response.ok) {
+      throw new Error(`ImgBB upload failed: ${response.status} ${response.statusText}`);
+    }
     
-    // Return the URL to the uploaded file
-    const fileUrl = `/uploads/events/${fileName}`;
+    const imgbbData = await response.json();
     
+    if (!imgbbData.success) {
+      throw new Error('ImgBB upload failed: ' + (imgbbData.error?.message || 'Unknown error'));
+    }
+    
+    // Return the URL to the uploaded image - using the direct image URL from the response
     return NextResponse.json({ 
       message: 'File uploaded successfully',
-      url: fileUrl
+      url: imgbbData.data.url // This is the direct URL to the image
     });
   } catch (error) {
     console.error('Error uploading file:', error);

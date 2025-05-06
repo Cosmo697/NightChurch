@@ -543,48 +543,58 @@ export default function AdminDashboard() {
             
             <div className="space-y-2">
               <Label htmlFor="image">Event Image *</Label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 relative">
-                  <Input 
-                    id="image" 
-                    value={currentEvent.image} 
-                    onChange={(e) => setCurrentEvent({...currentEvent, image: e.target.value})}
-                    className="bg-black/50 border-gray-700 pr-12"
-                    placeholder="URL or upload an image"
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept="image/*"
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 relative">
+                    <Input 
+                      id="image" 
+                      value={currentEvent.image} 
+                      onChange={(e) => setCurrentEvent({...currentEvent, image: e.target.value})}
+                      className="bg-black/50 border-gray-700 pr-12"
+                      placeholder="Enter image URL directly"
                     />
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploading}
-                      className="h-8 w-8"
-                    >
-                      {isUploading ? (
-                        <div className="animate-spin h-4 w-4 border-2 border-b-transparent border-purple-500 rounded-full" />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="h-8 w-8"
+                      >
+                        {isUploading ? (
+                          <div className="animate-spin h-4 w-4 border-2 border-b-transparent border-purple-500 rounded-full" />
+                        ) : (
+                          <Upload className="h-4 w-4 text-purple-300" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  {currentEvent.image && (
+                    <div className="border border-gray-700 rounded p-1 w-12 h-12 flex items-center justify-center">
+                      {currentEvent.image.startsWith('http') || currentEvent.image.startsWith('/') ? (
+                        <img src={currentEvent.image} alt="Preview" className="max-w-full max-h-full object-contain" />
                       ) : (
-                        <Upload className="h-4 w-4 text-purple-300" />
+                        <ImageIcon className="h-6 w-6 text-gray-400" />
                       )}
-                    </Button>
-                  </div>
+                    </div>
+                  )}
                 </div>
-                {currentEvent.image && (
-                  <div className="border border-gray-700 rounded p-1 w-12 h-12 flex items-center justify-center">
-                    {currentEvent.image.startsWith('http') || currentEvent.image.startsWith('/') ? (
-                      <img src={currentEvent.image} alt="Preview" className="max-w-full max-h-full object-contain" />
-                    ) : (
-                      <ImageIcon className="h-6 w-6 text-gray-400" />
-                    )}
-                  </div>
-                )}
+                <div className="text-gray-400 text-xs">
+                  <p>Tip: You can paste an image URL directly or use the upload button to try uploading an image.</p>
+                  <p>For manual entry, you can use image hosting services like:</p>
+                  <ul className="list-disc pl-5 mt-1">
+                    <li><a href="https://imgbb.com/upload" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:underline">imgBB</a> - Upload and copy the "Direct Link"</li>
+                    <li><a href="https://postimages.org/" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:underline">PostImages</a> - Free, no account required</li>
+                  </ul>
+                </div>
               </div>
             </div>
             

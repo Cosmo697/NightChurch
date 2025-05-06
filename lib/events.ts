@@ -1,13 +1,10 @@
 'use server';
 
-import path from 'path';
-import { promises as fs } from 'fs';
-
-// Path to events data folder
-const eventsDirectory = path.join(process.cwd(), 'data', 'events');
+import supabase from './supabase';
 
 // Define organizer type
 export type Organizer = {
+  id?: number;
   name: string;
   instagram?: string;
   facebook?: string;
@@ -34,44 +31,69 @@ export type Event = {
   ticketsAvailable?: boolean;
   rsvpLink?: string; // Renamed from ticketLink
   registrationOpens?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
-
-// Helper to ensure the directory exists
-async function ensureDirectoryExists() {
-  try {
-    await fs.mkdir(eventsDirectory, { recursive: true });
-  } catch (error) {
-    console.error('Error creating directory:', error);
-  }
-}
 
 // Get all events
 export async function getAllEvents(): Promise<Event[]> {
-  await ensureDirectoryExists();
-  
   try {
-    const fileNames = await fs.readdir(eventsDirectory);
-    const eventFiles = fileNames.filter(file => file.endsWith('.json'));
+    const { data: events, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('date', { ascending: true });
     
-    const eventsPromises = eventFiles.map(async (fileName) => {
-      const fullPath = path.join(eventsDirectory, fileName);
-      const fileContents = await fs.readFile(fullPath, 'utf8');
-      const parsedEvent = JSON.parse(fileContents) as Event;
+    if (error) {
+      console.error('Error fetching events:', error);
+      return [];
+    }
+    
+    // Format the events to match our expected type
+    const formattedEvents = await Promise.all(events.map(async (event) => {
+      // Get organizers for this event
+      const { data: organizers, error: organizersError } = await supabase
+        .from('event_organizers')
+        .select('*')
+        .eq('event_id', event.id);
+        
+      if (organizersError) {
+        console.error('Error fetching organizers:', organizersError);
+        return null;
+      }
+
+      // Convert from snake_case to camelCase
+      const formattedEvent: Event = {
+        id: event.id,
+        slug: event.slug,
+        title: event.title,
+        subtitle: event.subtitle || '',
+        date: event.date,
+        time: event.time,
+        location: event.location,
+        image: event.image || '',
+        badgeText: event.badge_text || 'Event',
+        badgeColor: event.badge_color || 'bg-purple-600 hover:bg-purple-700',
+        summary: event.summary,
+        presentedBy: event.presented_by || '',
+        organizers: organizers || [],
+        featured: event.featured || false,
+        ticketsAvailable: event.tickets_available || false,
+        rsvpLink: event.rsvp_link || '',
+        registrationOpens: event.registration_opens || '',
+        createdAt: event.created_at,
+        updatedAt: event.updated_at,
+      };
       
       // Handle backward compatibility for older events without organizers
-      if (!parsedEvent.organizers) {
-        parsedEvent.organizers = [{ name: parsedEvent.presentedBy }];
+      if (!formattedEvent.organizers || formattedEvent.organizers.length === 0) {
+        formattedEvent.organizers = [{ name: formattedEvent.presentedBy }];
       }
       
-      // Handle renamed ticketLink to rsvpLink for backward compatibility
-      if (parsedEvent.ticketLink && !parsedEvent.rsvpLink) {
-        parsedEvent.rsvpLink = parsedEvent.ticketLink;
-      }
-      
-      return parsedEvent;
-    });
+      return formattedEvent;
+    }));
     
-    return await Promise.all(eventsPromises);
+    // Filter out any null events (in case of errors)
+    return formattedEvents.filter(Boolean) as Event[];
   } catch (error) {
     console.error('Error reading events:', error);
     return [];
@@ -81,8 +103,57 @@ export async function getAllEvents(): Promise<Event[]> {
 // Get event by slug
 export async function getEventBySlug(slug: string): Promise<Event | null> {
   try {
-    const events = await getAllEvents();
-    return events.find(event => event.slug === slug) || null;
+    const { data: event, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching event by slug:', error);
+      return null;
+    }
+    
+    // Get organizers for this event
+    const { data: organizers, error: organizersError } = await supabase
+      .from('event_organizers')
+      .select('*')
+      .eq('event_id', event.id);
+      
+    if (organizersError) {
+      console.error('Error fetching organizers:', organizersError);
+      return null;
+    }
+    
+    // Convert from snake_case to camelCase
+    const formattedEvent: Event = {
+      id: event.id,
+      slug: event.slug,
+      title: event.title,
+      subtitle: event.subtitle || '',
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      image: event.image || '',
+      badgeText: event.badge_text || 'Event',
+      badgeColor: event.badge_color || 'bg-purple-600 hover:bg-purple-700',
+      summary: event.summary,
+      presentedBy: event.presented_by || '',
+      organizers: organizers || [],
+      featured: event.featured || false,
+      ticketsAvailable: event.tickets_available || false,
+      rsvpLink: event.rsvp_link || '',
+      registrationOpens: event.registration_opens || '',
+      createdAt: event.created_at,
+      updatedAt: event.updated_at,
+    };
+    
+    // Handle backward compatibility for older events without organizers
+    if (!formattedEvent.organizers || formattedEvent.organizers.length === 0) {
+      formattedEvent.organizers = [{ name: formattedEvent.presentedBy }];
+    }
+    
+    return formattedEvent;
   } catch (error) {
     console.error('Error getting event by slug:', error);
     return null;
@@ -91,9 +162,16 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
 
 // Create or update an event
 export async function saveEvent(event: Event): Promise<boolean> {
-  await ensureDirectoryExists();
-  
   try {
+    // First check connection to ensure DB is available
+    const { data: connectionOk, error: connectionError } = await supabase
+      .rpc('check_connection');
+      
+    if (connectionError || !connectionOk) {
+      console.error('Database connection error:', connectionError);
+      return false;
+    }
+    
     // Ensure backward compatibility
     if (!event.organizers) {
       event.organizers = [{ name: event.presentedBy }];
@@ -104,13 +182,68 @@ export async function saveEvent(event: Event): Promise<boolean> {
       event.presentedBy = event.organizers.map(o => o.name).join(' & ');
     }
     
-    // Handle renamed ticketLink to rsvpLink
-    if (event.ticketLink && !event.rsvpLink) {
-      event.rsvpLink = event.ticketLink;
+    // Convert from camelCase to snake_case for the database
+    const dbEvent = {
+      id: event.id,
+      slug: event.slug,
+      title: event.title,
+      subtitle: event.subtitle,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      image: event.image,
+      badge_text: event.badgeText,
+      badge_color: event.badgeColor,
+      summary: event.summary,
+      presented_by: event.presentedBy,
+      featured: event.featured,
+      tickets_available: event.ticketsAvailable,
+      rsvp_link: event.rsvpLink,
+      registration_opens: event.registrationOpens,
+    };
+    
+    // Insert or update the event
+    const { error: eventError } = await supabase
+      .from('events')
+      .upsert(dbEvent, { onConflict: 'id' });
+    
+    if (eventError) {
+      console.error('Error saving event:', eventError);
+      return false;
     }
     
-    const filePath = path.join(eventsDirectory, `${event.slug}.json`);
-    await fs.writeFile(filePath, JSON.stringify(event, null, 2), 'utf8');
+    // Delete existing organizers (we'll re-add them)
+    const { error: deleteError } = await supabase
+      .from('event_organizers')
+      .delete()
+      .eq('event_id', event.id);
+    
+    if (deleteError) {
+      console.error('Error deleting existing organizers:', deleteError);
+      return false;
+    }
+    
+    // Add organizers
+    if (event.organizers && event.organizers.length > 0) {
+      const organizers = event.organizers.map(org => ({
+        event_id: event.id,
+        name: org.name,
+        instagram: org.instagram || null,
+        facebook: org.facebook || null,
+        twitter: org.twitter || null,
+        website: org.website || null,
+      }));
+      
+      const { error: organizersError } = await supabase
+        .from('event_organizers')
+        .insert(organizers);
+      
+      if (organizersError) {
+        console.error('Error saving organizers:', organizersError);
+        return false;
+      }
+    }
+    
     return true;
   } catch (error) {
     console.error('Error saving event:', error);
@@ -121,8 +254,29 @@ export async function saveEvent(event: Event): Promise<boolean> {
 // Delete an event
 export async function deleteEvent(slug: string): Promise<boolean> {
   try {
-    const filePath = path.join(eventsDirectory, `${slug}.json`);
-    await fs.unlink(filePath);
+    // Get the event ID first
+    const { data: event, error: fetchError } = await supabase
+      .from('events')
+      .select('id')
+      .eq('slug', slug)
+      .single();
+    
+    if (fetchError) {
+      console.error('Error finding event to delete:', fetchError);
+      return false;
+    }
+    
+    // Delete the event (will cascade to organizers because of our FK constraint)
+    const { error: deleteError } = await supabase
+      .from('events')
+      .delete()
+      .eq('id', event.id);
+    
+    if (deleteError) {
+      console.error('Error deleting event:', deleteError);
+      return false;
+    }
+    
     return true;
   } catch (error) {
     console.error('Error deleting event:', error);

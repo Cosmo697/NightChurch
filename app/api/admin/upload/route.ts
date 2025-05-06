@@ -4,15 +4,11 @@ import crypto from 'crypto';
 
 // Get secret key from environment variable
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY;
-const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY || 'd2692625b6d0f6047b53d04003cc89b';
 
 // Check if environment variables are defined
 if (!SECRET_KEY) {
   console.error('Missing environment variable: ADMIN_SECRET_KEY');
-}
-
-if (!IMGBB_API_KEY) {
-  console.error('Missing environment variable: IMGBB_API_KEY');
 }
 
 // Verify admin token helper function
@@ -59,13 +55,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!IMGBB_API_KEY) {
-      return NextResponse.json(
-        { message: 'Server configuration error: Missing imgBB API key' },
-        { status: 500 }
-      );
-    }
-
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
@@ -84,40 +73,53 @@ export async function POST(request: Request) {
       );
     }
 
+    console.log('File received:', file.name, file.type, file.size);
+
     // Get file buffer
     const buffer = await file.arrayBuffer();
     const base64Image = Buffer.from(buffer).toString('base64');
-
-    // Create FormData for imgBB API
-    const imgbbFormData = new FormData();
-    imgbbFormData.append('key', IMGBB_API_KEY);
-    imgbbFormData.append('image', base64Image);
     
-    // Upload to imgBB
+    // Use URL parameters instead of FormData (more reliable across environments)
+    const params = new URLSearchParams();
+    params.append('key', IMGBB_API_KEY);
+    params.append('image', base64Image);
+    
+    console.log('Sending request to imgBB API...');
+
+    // Upload to imgBB using URL parameters
     const response = await fetch('https://api.imgbb.com/1/upload', {
       method: 'POST',
-      body: imgbbFormData
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params
     });
     
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('ImgBB API error response:', errorText);
       throw new Error(`ImgBB upload failed: ${response.status} ${response.statusText}`);
     }
     
     const imgbbData = await response.json();
+    console.log('ImgBB API response success:', imgbbData.success);
     
     if (!imgbbData.success) {
+      console.error('ImgBB error:', imgbbData.error);
       throw new Error('ImgBB upload failed: ' + (imgbbData.error?.message || 'Unknown error'));
     }
     
-    // Return the URL to the uploaded image - using the direct image URL from the response
+    console.log('Image uploaded successfully. URL:', imgbbData.data.url);
+    
+    // Return the URL to the uploaded image
     return NextResponse.json({ 
       message: 'File uploaded successfully',
-      url: imgbbData.data.url // This is the direct URL to the image
+      url: imgbbData.data.url
     });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { message: 'Failed to upload file' },
+      { message: 'Failed to upload file: ' + (error as Error).message },
       { status: 500 }
     );
   }

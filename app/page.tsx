@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays, Clock, MapPin, Music, Tent, Users } from 'lucide-react'
+import { CalendarDays, MapPin } from 'lucide-react'
 import RadioPlayer from "@/components/radio-player"
 import Portal from "@/components/portal"
 import EasterEgg from "@/components/easter-egg"
@@ -18,7 +18,8 @@ export default function Home() {
   const { portalSolved, setPortalSolved } = usePuzzle()
   const [showPortal, setShowPortal] = useState(!portalSolved)
   const [hasEntered, setHasEntered] = useState(false)
-  const [featuredEvent, setFeaturedEvent] = useState<Event | null>(null)
+  const [featuredEvents, setFeaturedEvents] = useState<Event[]>([])
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isLoadingEvent, setIsLoadingEvent] = useState(true)
   const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false)
 
@@ -33,13 +34,37 @@ export default function Home() {
     }
   }, [])
 
-  // Fetch featured event from API
+  // Fetch featured events from API
   useEffect(() => {
     fetch('/api/events')
       .then(response => response.json())
       .then(data => {
-        const featured = data.events.find((event: Event) => event.featured) || data.events[0]
-        setFeaturedEvent(featured)
+        // Get all featured events (or use the first event if none are featured)
+        let featured = data.events.filter((event: Event) => event.featured)
+        
+        // If no featured events, use the first event
+        if (featured.length === 0 && data.events.length > 0) {
+          featured = [data.events[0]]
+        }
+        
+        // Sort events by date (assuming date format like "June 21-22, 2025")
+        featured.sort((a: Event, b: Event) => {
+          // Extract first date from range and convert to timestamp
+          const getFirstDate = (dateStr: string) => {
+            const dateMatch = dateStr.match(/([A-Za-z]+)\s+(\d+)/)
+            if (dateMatch) {
+              const month = dateMatch[1]
+              const day = parseInt(dateMatch[2])
+              const year = dateStr.match(/\d{4}/) ? dateStr.match(/\d{4}/)![0] : "2025"
+              return new Date(`${month} ${day}, ${year}`).getTime()
+            }
+            return 0
+          }
+          
+          return getFirstDate(a.date) - getFirstDate(b.date)
+        })
+        
+        setFeaturedEvents(featured)
         setIsLoadingEvent(false)
       })
       .catch(error => {
@@ -131,102 +156,93 @@ export default function Home() {
                   <div className="animate-spin h-12 w-12 border-t-2 border-b-2 border-purple-500 rounded-full mx-auto mb-4"></div>
                   <p className="text-purple-300">Loading events...</p>
                 </div>
-              ) : featuredEvent ? (
-                <Card className="bg-black/50 border border-purple-900/50 overflow-hidden">
-                  <div className="relative h-64 md:h-80">
-                    <Image
-                      src={featuredEvent.image}
-                      alt={`${featuredEvent.title} - ${featuredEvent.subtitle}`}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                    <div className="absolute top-4 left-4">
-                      <Badge className={`${featuredEvent.badgeColor} text-white px-3 py-1 text-sm font-medium`}>
-                        {featuredEvent.badgeText}
-                      </Badge>
-                    </div>
-                    <div className="absolute bottom-0 left-0 p-6">
-                      <h3 className="text-3xl md:text-4xl font-bold mb-2 glow-text">{featuredEvent.title}</h3>
-                      <p className="text-xl text-purple-200">
-                        {featuredEvent.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex flex-col gap-6">
-                      <p className="text-lg text-muted-foreground">
-                        {featuredEvent.summary}
-                      </p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-start gap-3">
-                          <div className="bg-purple-900/30 p-2 rounded-md">
-                            <CalendarDays className="h-5 w-5 text-purple-300" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Date</h4>
-                            <p className="text-sm text-muted-foreground">{featuredEvent.date}</p>
-                          </div>
+              ) : featuredEvents.length > 0 ? (
+                <div className="space-y-6">
+                  {featuredEvents.map((event) => (
+                    <Card key={event.id} className="bg-black/50 border border-purple-900/50 overflow-hidden">
+                      <div className="relative h-64 md:h-72">
+                        <Image
+                          src={event.image}
+                          alt={`${event.title} - ${event.subtitle}`}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div className="absolute top-4 left-4">
+                          <Badge className={`${event.badgeColor} text-white px-3 py-1 text-sm font-medium`}>
+                            {event.badgeText}
+                          </Badge>
                         </div>
-
-                        <div className="flex items-start gap-3">
-                          <div className="bg-purple-900/30 p-2 rounded-md">
-                            <Clock className="h-5 w-5 text-purple-300" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Time</h4>
-                            <p className="text-sm text-muted-foreground">{featuredEvent.time}</p>
-                          </div>
+                        <div className="absolute bottom-0 left-0 p-6">
+                          <h3 className="text-3xl md:text-4xl font-bold mb-2 glow-text">{event.title}</h3>
                         </div>
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex items-start gap-3">
+                              <div className="bg-purple-900/30 p-2 rounded-md">
+                                <CalendarDays className="h-5 w-5 text-purple-300" />
+                              </div>
+                              <div>
+                                <h4 className="font-medium">Date & Time</h4>
+                                <p className="text-sm text-muted-foreground">{event.date}</p>
+                                <p className="text-sm text-muted-foreground">{event.time}</p>
+                              </div>
+                            </div>
 
-                        <div className="flex items-start gap-3">
-                          <div className="bg-purple-900/30 p-2 rounded-md">
-                            <MapPin className="h-5 w-5 text-purple-300" />
+                            <div className="flex items-start gap-3">
+                              <div className="bg-purple-900/30 p-2 rounded-md">
+                                <MapPin className="h-5 w-5 text-purple-300" />
+                              </div>
+                              <div>
+                                <h4 className="font-medium">Location</h4>
+                                {currentDate > locationRevealDate ? (
+                                  <p className="text-sm text-green-400">{event.location}</p>
+                                ) : (
+                                  <p className="text-sm text-muted-foreground">To be announced</p>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-medium">Location</h4>
-                            {currentDate > locationRevealDate ? (
-                              <p className="text-sm text-green-400">{featuredEvent.location}</p>
-                            ) : (
-                              <p className="text-sm text-muted-foreground">To be announced</p>
+
+                          {/* Organizers section */}
+                          <div className="mt-2 text-center">
+                            <h4 className="text-sm font-medium text-purple-300 mb-1">Presented by</h4>
+                            <p className="text-muted-foreground">{event.presentedBy}</p>
+                            {event.organizers && event.organizers.length > 0 && (
+                              <div className="flex justify-center gap-2 mt-2">
+                                {event.organizers.map((organizer, index) => (
+                                  organizer.instagram && (
+                                    <a 
+                                      key={index}
+                                      href={`https://instagram.com/${organizer.instagram}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-purple-400 hover:text-purple-300 text-sm"
+                                    >
+                                      @{organizer.instagram}
+                                    </a>
+                                  )
+                                ))}
+                              </div>
                             )}
                           </div>
-                        </div>
 
-                        <div className="flex items-start gap-3">
-                          <div className="bg-purple-900/30 p-2 rounded-md">
-                            <Users className="h-5 w-5 text-purple-300" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium">Presented By</h4>
-                            <p className="text-sm text-muted-foreground">{featuredEvent.presentedBy}</p>
+                          <div className="flex justify-center pt-2">
+                            <Button
+                              asChild
+                              size="lg"
+                              className="bg-purple-600 hover:bg-purple-700"
+                            >
+                              <Link href={`/events/${event.slug}`}>View Details</Link>
+                            </Button>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-                        <Button
-                          asChild
-                          variant="outline"
-                          size="lg"
-                          className="border-purple-500 text-purple-300 hover:bg-purple-950/50"
-                        >
-                          <Link href={`/events/${featuredEvent.slug}`}>View Details</Link>
-                        </Button>
-                        {featuredEvent.ticketsAvailable && (
-                          <Button
-                            size="lg"
-                            className="bg-pink-600 hover:bg-pink-700"
-                            onClick={() => setIsRsvpDialogOpen(true)}
-                          >
-                            RSVP Now
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               ) : (
                 <Card className="bg-black/50 border border-purple-900/50 p-6 text-center">
                   <p className="text-muted-foreground">No upcoming events currently scheduled.</p>
@@ -337,9 +353,9 @@ export default function Home() {
       </div>
 
       {/* RSVP Dialog */}
-      {featuredEvent && (
+      {selectedEvent && (
         <RsvpDialog 
-          event={featuredEvent} 
+          event={selectedEvent} 
           isOpen={isRsvpDialogOpen} 
           onOpenChange={setIsRsvpDialogOpen} 
         />

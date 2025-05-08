@@ -127,7 +127,7 @@ export default function EventDetailPage({ params }: { params: { slug: string } }
           <Card className="bg-black/50 border border-purple-900/50">
             <CardContent className="p-6">
               <h2 className="text-2xl font-bold mb-4">Event Details</h2>
-              <p className="text-lg text-center italic text-purple-200 mb-6">
+              <p className="text-lg text-center italic text-purple-200 mb-6 whitespace-pre-line">
                 {event.summary}
               </p>
               

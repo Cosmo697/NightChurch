@@ -41,7 +41,7 @@ export async function getAllEvents(): Promise<Event[]> {
     const { data: events, error } = await supabase
       .from('events')
       .select('*')
-      .order('date', { ascending: true });
+      .order('date', { ascending: false }); // Changed to descending to prioritize newest events
     
     if (error) {
       console.error('Error fetching events:', error);

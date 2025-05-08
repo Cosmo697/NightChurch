@@ -7,6 +7,8 @@ type TrackMetadata = {
   artist: string
   albumArt: string
   show: string
+  currentSong?: string  // Add optional current song field for live DJ broadcasts
+  listeners?: number    // Add listener count field
 }
 
 type RadioContextType = {
@@ -18,6 +20,8 @@ type RadioContextType = {
   isMuted: boolean
   metadata: TrackMetadata
   isLoading: boolean
+  isLiveDJ: boolean
+  listenerCount: number  // Add listener count to context
 }
 
 const defaultMetadata: TrackMetadata = {
@@ -25,6 +29,7 @@ const defaultMetadata: TrackMetadata = {
   artist: "Live Stream",
   albumArt: "",
   show: "Live Stream",
+  listeners: 0,
 }
 
 // Create a singleton audio instance that persists across renders
@@ -34,10 +39,12 @@ const RadioContext = createContext<RadioContextType | undefined>(undefined)
 
 export function RadioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolumeState] = useState(80)
+  const [volume, setVolumeState] = useState(50)
   const [isMuted, setIsMuted] = useState(false)
   const [metadata, setMetadata] = useState<TrackMetadata>(defaultMetadata)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLiveDJ, setIsLiveDJ] = useState(false)
+  const [listenerCount, setListenerCount] = useState(0)  // Add state for listener count
   const prevVolumeRef = useRef(volume)
   const isInitializedRef = useRef(false)
 
@@ -100,6 +107,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           const currentTrack = data.now_playing || {}
           const station = data.station || {}
           const live = data.live || {}
+          
+          // Extract listener count
+          const listeners = data.listeners?.current || 0
+          setListenerCount(listeners)
 
           // If a DJ is live, show their info
           if (live.is_live) {
@@ -108,7 +119,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               artist: "Live Stream",
               albumArt: live.art || "",
               show: station.name || "Night Church Radio",
+              currentSong: currentTrack.song?.title || "Unknown Track",
+              listeners
             })
+            setIsLiveDJ(true)
           } else {
             // Otherwise show the current song
             setMetadata({
@@ -116,7 +130,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               artist: currentTrack.song?.artist || "Unknown Artist",
               albumArt: currentTrack.song?.art || "",
               show: station.name || "Night Church Radio",
+              listeners
             })
+            setIsLiveDJ(false)
           }
         }
       } catch (error) {
@@ -127,17 +143,16 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Fetch immediately on mount
     fetchMetadata()
 
-    // Then fetch every 15 seconds if playing
-    if (isPlaying) {
-      intervalId = setInterval(fetchMetadata, 15000)
-    }
+    // Always fetch every 10 seconds, regardless of playing state
+    // This ensures we have updated listener counts even when paused
+    intervalId = setInterval(fetchMetadata, 10000)
 
     return () => {
       if (intervalId) {
         clearInterval(intervalId)
       }
     }
-  }, [isPlaying])
+  }, [])
 
   const togglePlay = () => {
     if (!globalAudio) return
@@ -211,6 +226,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         isMuted,
         metadata,
         isLoading,
+        isLiveDJ,
+        listenerCount,
       }}
     >
       {children}

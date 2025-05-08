@@ -27,4 +27,8 @@ yarn-error.log*
 next-env.d.ts
 
 # other files
+supabase-quickstart.txt
 puzzle-system-and-feature-unlock-developer-brief.txt
+supabase-events-schema.sql
+combined_sql_script.sql
+supabase.pdf

@@ -1,5 +1,6 @@
 "use client"
 
+// --- IMPORTS SECTION ---
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -10,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { RsvpDialog } from "@/components/rsvp-dialog"
 import { type Event } from "@/lib/events"
 
-// Helper function to generate calendar links
+// --- HELPER FUNCTIONS ---
+// Function to generate Google Calendar links for events
 function generateGoogleCalendarLink(event: Event) {
   const startDate = encodeURIComponent("20250621T160000");
   const endDate = encodeURIComponent("20250622T070000");
@@ -21,78 +23,29 @@ function generateGoogleCalendarLink(event: Event) {
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
 }
 
-// Countdown Timer Component
-function CountdownTimer({ targetDate }: { targetDate: string }) {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(targetDate));
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(targetDate));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [targetDate]);
-
-  function calculateTimeLeft(targetDate: string) {
-    const difference = +new Date(targetDate) - +new Date();
-    let timeLeft = {
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0
-    };
-
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
-    }
-
-    return timeLeft;
-  }
-
-  return (
-    <div className="flex justify-center bg-black/40 p-4 rounded-lg mb-6">
-      <div className="grid grid-cols-4 gap-4 text-center">
-        <div>
-          <div className="text-3xl font-bold text-pink-500">{timeLeft.days}</div>
-          <div className="text-xs text-purple-300">Days</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold text-pink-500">{timeLeft.hours}</div>
-          <div className="text-xs text-purple-300">Hours</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold text-pink-500">{timeLeft.minutes}</div>
-          <div className="text-xs text-purple-300">Minutes</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold text-pink-500">{timeLeft.seconds}</div>
-          <div className="text-xs text-purple-300">Seconds</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
+// --- MAIN EVENTS PAGE COMPONENT ---
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false);
+  // --- STATE MANAGEMENT ---
+  const [events, setEvents] = useState<Event[]>([]);  // All events from API
+  const [isLoading, setIsLoading] = useState(true);   // Loading state indicator
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);  // Selected event for RSVP dialog
+  const [isRsvpDialogOpen, setIsRsvpDialogOpen] = useState(false);  // RSVP dialog visibility
   
-  // Get current date for location reveal logic
+  // Date variables used for location reveal logic
   const currentDate = new Date()
-  const locationRevealDate = new Date(2025, 4, 4) // May 4, 2025
+  const locationRevealDate = new Date(2025, 4, 4) // May 4, 2025 - controls when locations are shown
 
+  // --- DATA FETCHING ---
+  // Fetch events from API on component mount
   useEffect(() => {
-    // Fetch events from our file-based API
     fetch('/api/events')
       .then(response => response.json())
       .then(data => {
-        setEvents(data.events);
+        // Sort events by date ascending (oldest to newest)
+        const sortedEvents = [...data.events].sort((a, b) => {
+          return new Date(a.date.split('-')[0]).getTime() - new Date(b.date.split('-')[0]).getTime();
+        });
+        setEvents(sortedEvents);
         setIsLoading(false);
       })
       .catch(error => {
@@ -101,6 +54,8 @@ export default function EventsPage() {
       });
   }, []);
 
+  // --- LOADING STATE ---
+  // Show loading spinner while events are being fetched
   if (isLoading) {
     return (
       <div className="container py-12 text-center">
@@ -112,28 +67,33 @@ export default function EventsPage() {
     )
   }
 
-  // Get featured event
+  // --- EVENT SORTING/FILTERING ---
+  // Separate featured and non-featured events
   const featuredEvent = events.find(event => event.featured);
-  // Get non-featured events
   const otherEvents = events.filter(event => !event.featured);
 
+  // --- EVENT HANDLERS ---
+  // Handle RSVP button clicks
   const handleRsvpClick = (event: Event) => {
     setSelectedEvent(event);
     setIsRsvpDialogOpen(true);
   };
 
+  // --- MAIN RENDER ---
   return (
     <div className="container py-12">
+      {/* --- PAGE HEADER --- */}
       <h1 className="text-4xl font-bold mb-6 glow-text text-center">Upcoming Events</h1>
       <p className="text-xl text-purple-200 text-center mb-12 max-w-2xl mx-auto">
         Join us for transformative experiences that blend music, movement, and community in unique locations.
       </p>
 
-      {/* Featured event - larger display */}
+      {/* --- FEATURED EVENT SECTION --- */}
       {featuredEvent && (
         <div className="mb-16">
           <h2 className="text-2xl font-semibold mb-4 text-center text-purple-300">Featured Event</h2>
           <Card className="bg-black/50 border border-purple-900/50 overflow-hidden">
+            {/* Featured Event Hero Image with Badge and Title Overlay */}
             <div className="relative h-80 md:h-96">
               <Image
                 src={featuredEvent.image}
@@ -152,8 +112,12 @@ export default function EventsPage() {
                 <p className="text-lg md:text-xl text-purple-200">{featuredEvent.subtitle}</p>
               </div>
             </div>
+            
+            {/* Featured Event Details Content */}
             <CardContent className="p-6">
+              {/* Event Metadata Grid (Date, Time, Location) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Date Information */}
                 <div className="flex items-start gap-3">
                   <div className="bg-purple-900/30 p-2 rounded-md">
                     <CalendarDays className="h-5 w-5 text-purple-300" />
@@ -164,6 +128,7 @@ export default function EventsPage() {
                   </div>
                 </div>
 
+                {/* Time Information */}
                 <div className="flex items-start gap-3">
                   <div className="bg-purple-900/30 p-2 rounded-md">
                     <Clock className="h-5 w-5 text-purple-300" />
@@ -174,40 +139,29 @@ export default function EventsPage() {
                   </div>
                 </div>
 
+                {/* Location Information - Conditionally shows either the location or "to be announced" */}
                 <div className="flex items-start gap-3">
                   <div className="bg-purple-900/30 p-2 rounded-md">
                     <MapPin className="h-5 w-5 text-purple-300" />
                   </div>
                   <div>
                     <h4 className="font-medium">Location</h4>
-                    {currentDate > locationRevealDate ? (
-                      <p className="text-sm text-green-400">
-                        <a 
-                          href={`https://maps.google.com/?q=${encodeURIComponent(featuredEvent.location)}`} 
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline flex flex-col"
-                        >
-                          {featuredEvent.location}
-                          <span className="text-xs italic mt-1">Click for directions</span>
-                        </a>
-                      </p>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        To be announced on Sunday, May 4th
-                      </p>
-                    )}
+                    <p className="text-sm text-green-400">
+                      <a 
+                        href={`https://maps.google.com/?q=${encodeURIComponent(featuredEvent.location)}`} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline flex flex-col"
+                      >
+                        {featuredEvent.location}
+                        <span className="text-xs italic mt-1">Click for directions</span>
+                      </a>
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <p className="mt-6 text-lg">{featuredEvent.summary}</p>
-
-              <div className="mt-6">
-                <h4 className="text-center text-purple-300 mb-2">Countdown to Event</h4>
-                <CountdownTimer targetDate="2025-06-21T16:00:00" />
-              </div>
-
+              {/* Add to Calendar Button */}
               <div className="flex items-center gap-2 mt-4">
                 <Button asChild variant="outline" size="sm">
                   <a 
@@ -221,9 +175,12 @@ export default function EventsPage() {
                 </Button>
               </div>
             </CardContent>
+            
+            {/* Featured Event Footer with Presenter Info and Action Buttons */}
             <CardFooter className="p-6 pt-0 flex justify-between items-center">
               <p className="text-sm text-muted-foreground">Presented by {featuredEvent.presentedBy}</p>
               <div className="flex gap-2">
+                {/* RSVP Button - Only shown if tickets are available */}
                 {featuredEvent.ticketsAvailable && (
                   <Button 
                     onClick={() => handleRsvpClick(featuredEvent)}
@@ -232,6 +189,7 @@ export default function EventsPage() {
                     RSVP Now
                   </Button>
                 )}
+                {/* View Details Button */}
                 <Button asChild>
                   <Link href={`/events/${featuredEvent.slug}`} className="flex items-center">
                     Details <ArrowRight className="ml-2 h-4 w-4" />
@@ -243,8 +201,10 @@ export default function EventsPage() {
         </div>
       )}
 
-      {/* Other upcoming events - grid of cards */}
+      {/* --- OTHER EVENTS SECTION --- */}
       <h2 className="text-2xl font-semibold mb-6 text-center text-purple-300">More Upcoming Events</h2>
+      
+      {/* Conditional rendering based on whether there are other events */}
       {otherEvents.length === 0 ? (
         <Card className="bg-black/50 border border-purple-900/50 p-6 text-center">
           <p className="text-muted-foreground">No other events currently scheduled.</p>
@@ -299,7 +259,6 @@ export default function EventsPage() {
                   </div>
                 </div>
                 
-                <p className="text-sm">{event.summary}</p>
               </CardContent>
               <CardFooter className="p-4 pt-0">
                 <div className="flex flex-col sm:flex-row gap-2 w-full">
@@ -327,7 +286,7 @@ export default function EventsPage() {
         </div>
       )}
 
-      {/* RSVP Dialog */}
+      {/* --- RSVP DIALOG COMPONENT --- */}
       {selectedEvent && (
         <RsvpDialog 
           event={selectedEvent} 

@@ -1,0 +1,30 @@
+/* Radio popup specific styles */
+.radio-popup-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure all unneeded elements are hidden */
+header, footer, .persistent-radio-player {
+  display: none !important;
+}
+
+/* Override any potential absolute/fixed positioning that might interfere */
+body > div:not(.radio-popup-container) > * {
+  display: none !important;
+}
+
+/* Ensure the popup fills the window */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background: black;
+}

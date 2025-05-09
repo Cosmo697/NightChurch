@@ -49,7 +49,7 @@ const getDjData = (id: string) => {
       name: "K~lala",
       role: "Resident DJ",
       image: "/images/djs/K-lala-dj.webp",
-      coverImage: "/images/cover/Cover_02.webp",
+      coverImage: "/images/cover/Cover_03.webp",
       bio: `K~lala started DJing after crossing paths with the NightChurch crew, and the connection was instant. What began as curiosity quickly became a deep passion. Self-taught and still learning, K~lala approaches every mix as a way to express, explore, and bring people into something honest and shared.
 
 Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Whether she's building tension or letting the music breathe, there's always heart behind the sound. If you're looking for something raw, genre-blending, and emotionally tuned—K~lala offers a unique experience shaped by instinct and soul.`,

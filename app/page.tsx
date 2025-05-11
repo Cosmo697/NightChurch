@@ -321,29 +321,27 @@ export default function Home() {
                     <Link href="/djs/k-lala">View Profile</Link>
                   </Button>
                 </CardContent>
-              </Card>
-
-              <Card className="bg-black/50 border border-purple-900/50">
+              </Card>              <Card className="bg-black/50 border border-purple-900/50">
                 <CardContent className="p-6 text-center">
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4 border-2 border-purple-500">
                     <div className="relative w-full h-full">
                       <Image
-                        src="images/djs/Madmanski.webp"
-                        alt="Madmanski"
+                        src="images/djs/DDavis.webp"
+                        alt="D.Davis"
                         fill
                         className="object-cover"
                       />
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-1">Madmanski</h3>
-                  <p className="text-muted-foreground mb-4">Co-Founder & Resident DJ</p>
+                  <h3 className="text-xl font-bold mb-1">D.Davis</h3>
+                  <p className="text-muted-foreground mb-4">Resident DJ</p>
                   <Button
                     asChild
                     variant="outline"
                     size="sm"
                     className="border-purple-500 text-purple-300 hover:bg-purple-950/50"
                   >
-                    <Link href="/djs/madmanski">View Profile</Link>
+                    <Link href="/djs/d-davis">View Profile</Link>
                   </Button>
                 </CardContent>
               </Card>

@@ -18,14 +18,11 @@ const getDjData = (id: string) => {
       name: "Mortl",
       role: "Founder & Resident DJ",
       image: "/images/djs/Mortl_Profile.webp",
-      coverImage: "/images/cover/Cover_02.webp",
+      coverImage: "/images/cover/Cover_04.webp",
       bio: `Mortl is a Southern California–based electronic music producer and projection-mapping artist. Alongside Madmanski and Metaperspective, he co-founded Night Church, a series of word-of-mouth desert gatherings. 
       
-
       After his first encounter with experimental soundscapes at El Mirage Dry Lakebed in 2006, Mortl developed a signature DJ style that blends psytrance, ambient textures, and tribal rhythms over high-fidelity stereo rigs beneath open skies. 
       
-      
-
       The trio hosts intimate, invitation-only events that encourage sensory immersion and creative collaboration. Attendees are invited to craft their own music or visuals for future gatherings, embodying Night Church's ethos of collective artistic exchange and personal discovery.`,
       genres: ["Psytrance", "Techno", "Ambient", "Experimental"],
       soundcloudUrl:
@@ -64,8 +61,8 @@ Grounded yet unpredictable, her mixing style leans into spontaneity and flow. Wh
       bio: `D.Davis is known for pushing the boundaries of electronic music with innovative mixing techniques and track selection. Their approach to DJing is experimental yet accessible, creating spaces where dancers can lose themselves in sound.
 
       With a keen ear for emerging trends and underground sounds, D.Davis brings fresh energy to the Night Church collective, constantly evolving their style while maintaining a signature sound.`,
-      genres: ["Techno", "Minimal", "Experimental"],
-      soundcloudUrl: "https://soundcloud.com",
+      genres: ["World", "House", "Hip-Hop", "Amapiano"],
+      soundcloudUrl: "https://soundcloud.com/milehighdavis/sets/main-set-m-joshua-tree",
       eventSlugs: ["reconnect-and-rise"]
     },
     emotep: {

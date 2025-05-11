@@ -109,7 +109,7 @@ export default function Home() {
 
       <div className="flex flex-col min-h-screen relative">
         {/* Hero Section */}
-        <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/NC_Background.webp"
@@ -122,7 +122,7 @@ export default function Home() {
           </div>
 
           <div className="container relative z-10 text-center">
-            <div className="relative w-full max-w-3xl mx-auto h-32 md:h-40 lg:h-48 mb-6">
+            <div className="relative w-full max-w-3xl mx-auto mb-8 aspect-[6/1]">
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Night_Church_Lettering_2025-91Om38Pp5FVchfMDtevijvAfdYGf6f.webp"
                 alt="NIGHT CHURCH"
@@ -147,7 +147,7 @@ export default function Home() {
         </section>
 
         {/* Upcoming Events */}
-        <section className="py-12">
+        <section className="py-16">
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center glow-text">Upcoming Events</h2>
             <div className="max-w-3xl mx-auto">
@@ -177,7 +177,7 @@ export default function Home() {
                           <h3 className="text-3xl md:text-4xl font-bold mb-2 glow-text">{event.title}</h3>
                         </div>
                       </div>
-                      <CardContent className="p-6">
+                      <CardContent className="p-8">
                         <div className="flex flex-col gap-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="flex items-start gap-3">
@@ -269,12 +269,12 @@ export default function Home() {
         </section>
 
         {/* Featured Artists */}
-        <section className="py-12 bg-black/80 relative">
+        <section className="py-16 bg-black/80 relative">
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center glow-text">Featured Artists</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="bg-black/50 border border-purple-900/50">
-                <CardContent className="p-4 text-center">
+                <CardContent className="p-6 text-center">
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4 border-2 border-pink-500">
                     <div className="relative w-full h-full">
                       <Image
@@ -299,7 +299,7 @@ export default function Home() {
               </Card>
 
               <Card className="bg-black/50 border border-purple-900/50">
-                <CardContent className="p-4 text-center">
+                <CardContent className="p-6 text-center">
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4 border-2 border-cyan-500">
                     <div className="relative w-full h-full">
                       <Image
@@ -324,7 +324,7 @@ export default function Home() {
               </Card>
 
               <Card className="bg-black/50 border border-purple-900/50">
-                <CardContent className="p-4 text-center">
+                <CardContent className="p-6 text-center">
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4 border-2 border-purple-500">
                     <div className="relative w-full h-full">
                       <Image

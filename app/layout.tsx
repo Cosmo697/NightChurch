@@ -42,7 +42,7 @@ export default function RootLayout({
           <RadioProvider>
             <PuzzleProvider>
               <Header />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow pt-16">{children}</main>
               <Footer />
               <PersistentRadioPlayer />
             </PuzzleProvider>

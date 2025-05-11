@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import SoundcloudEmbed from "@/components/soundcloud-embed"
-import { InterpretiveFigure } from "@/components/dancing-figures"
 import { type Event } from "@/lib/events"
 
 // Update the getDjData function to use the new cover image for all DJs
@@ -126,14 +125,8 @@ export default function DjProfilePage({ params }: { params: { id: string } }) {
       </div>
     )
   }
-
   return (
     <div className="container py-12 relative">
-      {/* Moved dancing figure to bottom-right corner */}
-      <div className="absolute bottom-0 right-0 z-0">
-        <InterpretiveFigure delay={1000} />
-      </div>
-
       <div className="mb-6">
         <Button asChild variant="ghost" size="sm" className="mb-4">
           <Link href="/djs" className="flex items-center">

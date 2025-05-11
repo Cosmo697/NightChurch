@@ -4,7 +4,6 @@ import Image from "next/image"
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog"
-import { DancerFigure } from "@/components/dancing-figures"
 import { Button } from "@/components/ui/button"
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize, Minimize } from "lucide-react"
 
@@ -194,14 +193,8 @@ export default function GalleryPage() {
   }, [selectedImageIndex, handleZoomIn, handleZoomOut, isFullscreen, zoomLevel, toggleFullscreen])
 
   const selectedImage = selectedImageIndex !== null ? galleryImages[selectedImageIndex] : null
-
   return (
     <div className="container py-12 relative">
-      {/* Dancing figure in the top-right corner */}
-      <div className="absolute top-0 right-0 z-0">
-        <DancerFigure delay={800} />
-      </div>
-
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center glow-text">Gallery</h1>
       <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
         Explore the visual journey of Night Church events in the Southern California desert

@@ -89,23 +89,3 @@
     background-position: 0% 50%;
   }
 }
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.dancing-figure {
-  animation: float 6s ease-in-out infinite;
-}
-
-.dancing-figure:hover {
-  animation-play-state: paused;
-}
